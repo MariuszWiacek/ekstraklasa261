@@ -3,7 +3,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import usersData from '../gameData/users.json';
 import gameData from '../gameData/data.json';
-import teamsData from '../gameData/teams.json';
+import teamsData from '../gameData/teams.json';vercel
 import { getDatabase, ref, onValue, update } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import { initializeApp, getApps } from 'firebase/app';

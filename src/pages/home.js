@@ -11,7 +11,7 @@ const Home = () => {
     return (
         
         <div className="fade-in">
-            <h1 style={welcomeMessageStyle}>Typer LIGI POLSKIEJ - Jesień 2025</h1>
+            <h1 style={welcomeMessageStyle}>Typer LIGI POLSKIEJ - Wiosna 2026</h1>
             <TeamLogos />
             <Container fluid style={linkContainerStyle}>
                 <Row>
