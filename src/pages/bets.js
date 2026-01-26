@@ -14,14 +14,13 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from 'luxon';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC2cF6rVGusj97WXgab0_ZmHYFtvhMBI0g",
-  authDomain: "jesien25-cd53b.firebaseapp.com",
-  projectId: "jesien25-cd53b",
-  databaseURL: "https://jesien25-cd53b-default-rtdb.europe-west1.firebasedatabase.app",
-  storageBucket: "jesien25-cd53b.firebasestorage.app",
-  messagingSenderId: "557329099544",
-  appId: "1:557329099544:web:f801e81254547845418c6d",
-  measurementId: "G-EHS5DBQXJZ"
+  apiKey: "AIzaSyB3AOrOzAQ-WVMjeZ3ayNwklR7axBgXJ0I",
+  authDomain: "wiosna26-951d6.firebaseapp.com",
+  projectId: "wiosna26-951d6",
+  storageBucket: "wiosna26-951d6.firebasestorage.app",
+  messagingSenderId: "58145083288",
+  appId: "1:58145083288:web:f2d813d31a64bcdfcba5ed",
+  measurementId: "G-0R5JLD75SW"
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
