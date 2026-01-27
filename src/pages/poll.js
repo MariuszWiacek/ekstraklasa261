@@ -44,12 +44,12 @@ const SignupPage = ({ onClose }) => {
       <div style={boxStyle}>
         <button onClick={onClose} style={closeButtonStyle}>X</button>
         <h8 style={headingStyle}>
-          Zapisy ! Typer Ekstraklasa Jesień 2025 <br /> udowodnij, że znasz się na piłce!
+          Zapisy ! Typer Ekstraklasa Wiosna 2026 <br /> udowodnij, że znasz się na piłce!
         </h8>
         <hr />
         <p style={descriptionStyle}>
           Zrzutka po ok. 60 <FontAwesomeIcon icon={faCoins} style={{ color: "#f0c419" }} />, w zależności od ilości graczy.<br /><br />
-          Zapisy do 15.7
+          Zapisy do 30.1
         </p>
         <input
           type="text"
