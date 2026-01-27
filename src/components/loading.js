@@ -65,7 +65,7 @@ function Loading({ onLoaded }) {
             top: 0,
             left: 0,
             width: '110%',
-            height: '95%',
+            height: '110%',
             objectFit: 'cover',
             opacity: 3.5,
             mixBlendMode: 'screen',
