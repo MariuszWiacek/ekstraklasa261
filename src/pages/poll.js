@@ -152,16 +152,15 @@ const buttonStyle = {
 };
 
 const horizontalListStyle = {
-
   listStyle: "none",
   padding: "10px 0",
   margin: "10px 0",
   display: "flex",
-  flexDirection: "column", // vertical stacking
-  overflowY: "auto",       // enable vertical scrolling
-  maxHeight: "200px",      // set a max height for scrollable area
+  flexDirection: "row",
+  overflowX: "auto",           // <-- Enables horizontal scrolling
+  whiteSpace: "nowrap",
   gap: "10px",
-  maxWidth: "100%",         // Optional, ensures it stays inside container
+  maxWidth: "100%",            // Optional, ensures it stays inside container
 };
 
 
