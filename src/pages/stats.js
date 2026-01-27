@@ -67,7 +67,7 @@ const Stats = () => {
     const scoreCount = {};
     const matchedScores = {};
     const drawCount = {};
-    const userDraws = {};
+    
     const emptyScoreCount = {};
 
     Object.keys(submittedData).forEach((user) => {

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { getDatabase, ref, onValue, update } from 'firebase/database';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
 import usersData from '../gameData/users.json';
 import gameData from '../gameData/data.json';
-import teamsData from '../gameData/teams.json';vercel
-import { getDatabase, ref, onValue, update } from 'firebase/database';
+import teamsData from '../gameData/teams.json';
 import { getAuth } from 'firebase/auth';
 import { initializeApp, getApps } from 'firebase/app';
 import ExpandableCard from '../components/expandableCard';
