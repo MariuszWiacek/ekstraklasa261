@@ -1,6 +1,6 @@
-[
-  { "id": 1, "kolejkaId": 19, "home": "Radomiak", "away": "Arka", "kickoff": "20:30", "date": "2026-01-30", "disabled": false },
-  { "id": 2, "kolejkaId": 19, "home": "Zagłębie", "away": "GKS", "kickoff": "18:00", "date": "2026-01-30", "disabled": false },
+[   { "id": 1, "kolejkaId": 19, "home": "Zagłębie", "away": "GKS", "kickoff": "18:00", "date": "2026-01-30", "disabled": false },
+
+  { "id": 2, "kolejkaId": 19, "home": "Radomiak", "away": "Arka", "kickoff": "20:30", "date": "2026-01-30", "disabled": false },
   { "id": 3, "kolejkaId": 19, "home": "Górnik", "away": "Piast", "kickoff": "14:45", "date": "2026-01-31", "disabled": false },
   { "id": 4, "kolejkaId": 19, "home": "Widzew", "away": "Jagiellonia", "kickoff": "17:30", "date": "2026-01-31", "disabled": false },
   { "id": 5, "kolejkaId": 19, "home": "Lech", "away": "Lechia", "kickoff": "20:15", "date": "2026-01-31", "disabled": false },
