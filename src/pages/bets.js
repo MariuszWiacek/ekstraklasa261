@@ -163,6 +163,9 @@ const Bets = () => {
   const getTeamLogo = (name) => teamsData[name]?.logo || '';
   const toggleEditableOff = () => setAreInputsEditable(false);
   const toggleEditableOn = () => setAreInputsEditable(true);
+
+
+
 return (
     <div className="fade-in" style={{ textAlign: 'center' }}>
       <p>Wybrany użytkownik : </p>
