@@ -55,7 +55,8 @@ const ExpandableCard = ({ user, bets, results }) => {
               <div style={{ fontSize: '10px' }}>
                  <span style={{ color: 'black' }}>{bet.home}</span> vs. <span style={{ color: 'black' }}>{bet.away}</span> |{' '}
 
-                
+                <>
+               
                     <span style={{ color: 'blue' }}>Typ: [ {bet.bet} ]</span> | 
                     <span style={{ color: 'black' }}>{bet.score}</span>
                   </>
