@@ -60,7 +60,7 @@ const ExpandableCard = ({ user, bets, results }) => {
                     <span style={{ color: 'blue' }}>Typ: [ {bet.bet} ]</span> | 
                     <span style={{ color: 'black' }}>{bet.score}</span>
                   </>
-                )}
+                
 
                 <span className="results-style"> Wynik: </span>
                 <span>{results[bet.id]}</span>
