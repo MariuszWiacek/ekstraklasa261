@@ -303,15 +303,15 @@ const Table = () => {
 
 
 <div style={earningsStyle}><hr></hr>
-  <p style={{fontSize: '15px', }}>15x60=900 🥮
-          18 kolejek x 10 🥮 = 180 🥮
-          900 - 180=   720 🥮 w puli
+  <p style={{fontSize: '15px', }}>16x60=960 🥮
+          16 kolejek x 10 🥮 = 160 🥮
+          960 - 160=   800 🥮 w puli
           <hr/></p>
   <div style={{ marginTop: '10px', color: '#FFD700' }}>
           
           <b>Aktualne Nagrody :</b><hr />
           {mainTableData[0] && (
-    <p>🥇 1 miejsce – <b>{mainTableData[0].user} - 400 🥮</b></p>
+    <p>🥇 1 miejsce – <b>{mainTableData[0].user} - 450 🥮</b></p>
   )}
 
   {mainTableData[1] && (
@@ -319,7 +319,7 @@ const Table = () => {
   )}
 
   {mainTableData[2] && (
-    <p>🥉 3 miejsce – <b>{mainTableData[2].user} – 120 🥮</b></p>
+    <p>🥉 3 miejsce – <b>{mainTableData[2].user} – 150 🥮</b></p>
   )}
          
         </div>
