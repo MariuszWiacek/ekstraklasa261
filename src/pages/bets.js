@@ -14,13 +14,13 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from 'luxon';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: "AIzaSyB3AOrOzAQ-WVMjeZ3ayNwklR7axBgXJ0I",
   authDomain: "wiosna26-951d6.firebaseapp.com",
   databaseURL: "https://wiosna26-951d6-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "wiosna26-951d6",
   storageBucket: "wiosna26-951d6.firebasestorage.app",
   messagingSenderId: "58145083288",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  appId: "1:58145083288:web:f2d813d31a64bcdfcba5ed",
   measurementId: "G-0R5JLD75SW"
 };
 
