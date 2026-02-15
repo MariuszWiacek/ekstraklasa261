@@ -10,8 +10,8 @@
   { "id": 9, "kolejkaId": 19, "home": "Termalica", "away": "Cracovia", "kickoff": "19:00", "date": "2026-02-02", "disabled": false },
 
 
-{ "id": 10, "kolejkaId": 1, "home": "Piast", "away": "Lech", "kickoff": "19:30", "date": "2026-02-03", "message" : " - zaległy mecz 4. kolejki", "disabled": false },
-{ "id": 11, "kolejkaId": 1, "home": "Jagiellonia", "away": "GKS", "kickoff": "19:30", "date": "2026-02-04",  "message" : " - zaległy mecz 16. kolejki", "disabled": false },
+{ "id": 10, "kolejkaId": 1, "home": "Piast", "away": "Lech", "kickoff": "20:30", "date": "2026-02-03", "message" : " - zaległy mecz 4. kolejki", "disabled": false },
+{ "id": 11, "kolejkaId": 1, "home": "Jagiellonia", "away": "GKS", "kickoff": "00:00", "date": "2026-00-00",  "message" : " - zaległy mecz 16. kolejki - termin jeszcze nieustalony", "disabled": false },
 {  "id": 12, "kolejkaId": 1, "home": "--------", "away": "--------", "kickoff": "", "date": "", "disabled": false },
 {  "id": 13,"kolejkaId": 1, "home": "--------", "away": "--------", "kickoff": "", "date": "", "disabled": false },
 {  "id": 14,"kolejkaId": 1, "home": "--------", "away": "--------", "kickoff": "", "date": "", "disabled": false },

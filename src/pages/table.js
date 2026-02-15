@@ -6,7 +6,7 @@ import { calculatePoints } from '../components/calculatePoints';
 import Stats from './stats';
 
 const firebaseConfig = {
- apiKey: "AIzaSyB3AOrOzAQ-WVMjeZ3ayNwklR7axBgXJ0I",
+  apiKey: "AIzaSyB3AOrOzAQ-WVMjeZ3ayNwklR7axBgXJ0I",
   authDomain: "wiosna26-951d6.firebaseapp.com",
   databaseURL: "https://wiosna26-951d6-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "wiosna26-951d6",

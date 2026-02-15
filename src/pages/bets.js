@@ -34,6 +34,14 @@ const groupGamesIntoKolejki = (games) => {
   games.forEach((game, index) => {
     const currentKolejkaId = Math.floor(index / 9) + 1;
     game.kolejkaId = currentKolejkaId;
+
+    // Permanently disable games with ID 12 to 18
+    if (game.id >= 12 && game.id <= 18) {
+      game.disabled = true;
+    } else {
+      game.disabled = false;
+    }
+
     if (!kolejki[currentKolejkaId - 1]) {
       kolejki[currentKolejkaId - 1] = { id: currentKolejkaId, games: [] };
     }
@@ -41,7 +49,6 @@ const groupGamesIntoKolejki = (games) => {
   });
   return kolejki;
 };
-
 const Bets = () => {
   const [kolejki, setKolejki] = useState(groupGamesIntoKolejki(gameData));
   const [selectedUser, setSelectedUser] = useState('');
