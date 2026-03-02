@@ -11,7 +11,7 @@
 
 
 { "id": 10, "kolejkaId": 1, "home": "Piast", "away": "Lech", "kickoff": "20:30", "date": "2026-02-03", "message" : " - zaległy mecz 4. kolejki", "disabled": false },
-{ "id": 11, "kolejkaId": 1, "home": "Jagiellonia", "away": "GKS", "kickoff": "17:00", "date": "2026-03-17",  "message" : " - zaległy mecz 16. kolejki", "disabled": false },
+{ "id": 11, "kolejkaId": 1, "home": "Jagiellonia", "away": "GKS", "kickoff": "19:00", "date": "2026-03-17",  "message" : " - zaległy mecz 16. kolejki", "disabled": false },
 {  "id": 12, "kolejkaId": 1, "home": "--------", "away": "--------", "kickoff": "", "date": "", "disabled": false },
 {  "id": 13,"kolejkaId": 1, "home": "--------", "away": "--------", "kickoff": "", "date": "", "disabled": false },
 {  "id": 14,"kolejkaId": 1, "home": "--------", "away": "--------", "kickoff": "", "date": "", "disabled": false },
