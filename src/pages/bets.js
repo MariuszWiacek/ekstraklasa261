@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { getDatabase, ref, onValue, update } from 'firebase/database';
-import 'firebase/compat/auth';
-import 'firebase/compat/database';
 import usersData from '../gameData/users.json';
 import gameData from '../gameData/data.json';
 import teamsData from '../gameData/teams.json';
@@ -14,86 +12,65 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from 'luxon';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB3AOrOzAQ-WVMjeZ3ayNwklR7axBgXJ0I",
-  authDomain: "wiosna26-951d6.firebaseapp.com",
-  databaseURL: "https://wiosna26-951d6-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "wiosna26-951d6",
-  storageBucket: "wiosna26-951d6.firebasestorage.app",
-  messagingSenderId: "58145083288",
-  appId: "1:58145083288:web:f2d813d31a64bcdfcba5ed",
-  measurementId: "G-0R5JLD75SW"
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_AUTH",
+  databaseURL: "YOUR_DB",
+  projectId: "YOUR_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_SENDER",
+  appId: "YOUR_APP",
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-
 const auth = getAuth();
 const database = getDatabase();
 
 const groupGamesIntoKolejki = (games) => {
   const kolejki = [];
   games.forEach((game, index) => {
-    const currentKolejkaId = Math.floor(index / 9) + 1;
-    game.kolejkaId = currentKolejkaId;
+    const kolejkaId = Math.floor(index / 9) + 1;
+    game.kolejkaId = kolejkaId;
+    game.disabled = game.id >= 12 && game.id <= 18;
 
-    // Permanently disable games with ID 12 to 18
-    if (game.id >= 12 && game.id <= 18) {
-      game.disabled = true;
-    } else {
-      game.disabled = false;
+    if (!kolejki[kolejkaId - 1]) {
+      kolejki[kolejkaId - 1] = { id: kolejkaId, games: [] };
     }
-
-    if (!kolejki[currentKolejkaId - 1]) {
-      kolejki[currentKolejkaId - 1] = { id: currentKolejkaId, games: [] };
-    }
-    kolejki[currentKolejkaId - 1].games.push(game);
+    kolejki[kolejkaId - 1].games.push(game);
   });
   return kolejki;
 };
+
 const Bets = () => {
   const [kolejki, setKolejki] = useState(groupGamesIntoKolejki(gameData));
   const [selectedUser, setSelectedUser] = useState('');
   const [submittedData, setSubmittedData] = useState({});
-  const [isDataSubmitted, setIsDataSubmitted] = useState(false);
   const [results, setResults] = useState({});
   const [currentKolejkaIndex, setCurrentKolejkaIndex] = useState(0);
-  const [areInputsEditable, setAreInputsEditable] = useState(true);
+  const [hideTypes, setHideTypes] = useState({});
 
   useEffect(() => {
-    const lastChosenUser = localStorage.getItem('selectedUser');
-    if (lastChosenUser) setSelectedUser(lastChosenUser);
+    const lastUser = localStorage.getItem('selectedUser');
+    if (lastUser) setSelectedUser(lastUser);
 
     auth.onAuthStateChanged((user) => {
       if (user) setSelectedUser(user.displayName);
     });
 
-    const dbRef = ref(database, 'submittedData');
-    onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        setSubmittedData(data);
-        setIsDataSubmitted(true);
-      }
+    onValue(ref(database, 'submittedData'), snap => {
+      const data = snap.val();
+      if (data) setSubmittedData(data);
     });
 
-    const resultsRef = ref(database, 'results');
-    onValue(resultsRef, (snapshot) => {
-      const data = snapshot.val();
+    onValue(ref(database, 'results'), snap => {
+      const data = snap.val();
       if (data) setResults(data);
     });
 
-    const now = new Date();
-    const nextGameIndex = gameData.findIndex(game => new Date(`${game.date}T${game.kickoff}:00+02:00`) > now);
-    const kolejkaIndex = Math.floor(nextGameIndex / 9);
-    setCurrentKolejkaIndex(kolejkaIndex);
+    onValue(ref(database, 'hideTypes'), snap => {
+      const data = snap.val();
+      if (data) setHideTypes(data);
+    });
   }, []);
-
-  const isReadOnly = (user, gameId) => submittedData[user] && submittedData[user][gameId];
-
-  const gameStarted = (gameDate, gameKickoff) => {
-    const now = DateTime.now().setZone('Europe/Warsaw');
-    const kickoff = DateTime.fromISO(`${gameDate}T${gameKickoff}:00`, { zone: 'Europe/Warsaw' });
-    return now >= kickoff;
-  };
 
   const autoDetectBetType = (score) => {
     const [home, away] = score.split(':').map(Number);
@@ -105,238 +82,101 @@ const Bets = () => {
     const cleaned = scoreInput.replace(/[^0-9:]/g, '');
     const formatted = cleaned.replace(/^(?:(\d))([^:]*$)/, '$1:$2');
 
-    const updated = kolejki.map(kolejka => ({
-      ...kolejka,
-      games: kolejka.games.map(game =>
-        game.id === gameId
-          ? { ...game, score: formatted, bet: autoDetectBetType(formatted) }
-          : game
+    const updated = kolejki.map(k => ({
+      ...k,
+      games: k.games.map(g =>
+        g.id === gameId
+          ? { ...g, score: formatted, bet: autoDetectBetType(formatted) }
+          : g
       )
     }));
     setKolejki(updated);
   };
 
-  const handleUserChange = (e) => {
-    const user = e.target.value;
-    setSelectedUser(user);
-    localStorage.setItem('selectedUser', user);
-  };
-
   const handleSubmit = () => {
-    if (!selectedUser) {
-      alert('Proszę wybrać użytkownika.');
-      return;
-    }
+    if (!selectedUser) return alert('Wybierz użytkownika.');
 
-    const currentKolejka = kolejki[currentKolejkaIndex];
-    const userSubmittedBets = submittedData[selectedUser] || {};
+    const current = kolejki[currentKolejkaIndex];
+    const newBets = {};
 
-    const newBetsToSubmit = currentKolejka.games.reduce((acc, game) => {
-      if (game.score && !userSubmittedBets[game.id]) {
-        acc[game.id] = {
+    current.games.forEach(game => {
+      if (game.score) {
+        newBets[game.id] = {
           home: game.home,
           away: game.away,
           score: game.score,
           bet: autoDetectBetType(game.score),
-          kolejkaId: game.kolejkaId,
+          kolejkaId: game.kolejkaId
         };
       }
-      return acc;
-    }, {});
+    });
 
-    if (Object.keys(newBetsToSubmit).length === 0) {
-      alert("Wszystkie zakłady zostały już przesłane.");
-      return;
-    }
-
-    update(ref(database, `submittedData/${selectedUser}`), newBetsToSubmit)
-      .then(() => {
-        setSubmittedData(prev => ({
-          ...prev,
-          [selectedUser]: {
-            ...prev[selectedUser],
-            ...newBetsToSubmit
-          }
-        }));
-        setIsDataSubmitted(true);
-        alert('Zakłady zostały pomyślnie przesłane!');
-      })
-      .catch((error) => {
-        console.error('Błąd:', error);
-        alert('Wystąpił błąd przy zapisie. Spróbuj ponownie.');
-      });
+    update(ref(database, `submittedData/${selectedUser}`), newBets)
+      .then(() => alert('Zakłady zapisane!'))
+      .catch(() => alert('Błąd zapisu.'));
   };
 
-  const getTeamLogo = (name) => teamsData[name]?.logo || '';
-  const toggleEditableOff = () => setAreInputsEditable(false);
-  const toggleEditableOn = () => setAreInputsEditable(true);
+  const handleHideToggle = (value) => {
+    update(ref(database, `hideTypes/${selectedUser}`), {
+      [currentKolejkaIndex]: value
+    });
+  };
 
-
-
-return (
-    <div className="fade-in" style={{ textAlign: 'center' }}>
-      <p>Wybrany użytkownik : </p>
-      <FontAwesomeIcon icon={faUser} style={{ marginRight: '8px', fontSize: '14px', color: 'yellow' }} />
-      <select
-        style={{ margin: '1px', backgroundColor: 'pink', fontWeight: 'bold', fontFamily: 'Rubik' }}
-        value={selectedUser}
-        onChange={handleUserChange}
-      >
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <FontAwesomeIcon icon={faUser} />
+      <select value={selectedUser} onChange={(e) => {
+        setSelectedUser(e.target.value);
+        localStorage.setItem('selectedUser', e.target.value);
+      }}>
         <option value="">Użytkownik</option>
-        {Object.keys(usersData).map((user, index) => (
-          <option key={index} value={user}>{user}</option>
-        ))}
+        {Object.keys(usersData).map(user =>
+          <option key={user} value={user}>{user}</option>
+        )}
       </select>
 
-      <div style={{ backgroundColor: '#212529ab', color: 'aliceblue', padding: '20px', textAlign: 'center', marginBottom: '10px', marginTop: '5%' }}>
-        <Pagination
-          currentPage={currentKolejkaIndex}
-          totalPages={kolejki.length}
-          onPageChange={(page) => setCurrentKolejkaIndex(page)}
-          label="Kolejka"
-        />
+      <Pagination
+        currentPage={currentKolejkaIndex}
+        totalPages={kolejki.length}
+        onPageChange={setCurrentKolejkaIndex}
+        label="Kolejka"
+      />
 
-        <table style={{ width: '100%', border: '0.5px solid #444', borderCollapse: 'collapse', marginTop: '5%' }}>
-          <thead>
-            <tr>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}></th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Gospodarz</th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}></th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Gość</th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Wynik</th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>1X2</th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Typ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Check if kolejki and the selected currentKolejkaIndex are valid */}
-            {kolejki && kolejki[currentKolejkaIndex] && kolejki[currentKolejkaIndex].games ? (
-              kolejki[currentKolejkaIndex].games.map((game, index) => (
-                <React.Fragment key={index}>
-                  <tr
-                    style={{
-                      opacity: game.disabled ? '0.5' : '1',
-                      pointerEvents: game.disabled ? 'none' : 'auto',
-                      backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent',
-                    }}
-                  >
-                    <td
-                      colSpan="12"
-                      className="date"
-                      style={{ textAlign: 'left', color: 'gold', fontSize: '10px', paddingLeft: '10%' }}
-                    >
-                      &nbsp;&nbsp;&nbsp;
-                      {game.date}
-                      &nbsp;&nbsp;&nbsp;
-                      {game.kickoff}
-                       &nbsp;&nbsp;&nbsp;
-                      {game.message}
-                    </td>
-                  </tr>
-                  <tr
-                    style={{
-                      borderBottom: '1px solid #444',
-                      opacity: game.disabled ? '0.5' : '1',
-                      pointerEvents: game.disabled ? 'none' : 'auto',
-                      backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent',
-                    }}
-                  >
-                    <p style={{ color: 'grey' }}>{game.id}.</p>
-                    <td style={{ textAlign: 'center', paddingRight: '10px', fontSize: '20px' }}>
-                      <img src={getTeamLogo(game.home)} className="logo" />
-                      {game.home}
-                    </td>
-                    <td style={{ textAlign: 'center', fontSize: '20px' }}>-</td>
-                    <td style={{ textAlign: 'left', paddingLeft: '10px', fontSize: '20px' }}>
-                      <img src={getTeamLogo(game.away)} className="logo" />
-                      {game.away}
-                    </td>
-                    <td style={{ textAlign: 'center', fontSize: '20px' }}>{results[game.id]}</td>
-                    <td style={{ textAlign: 'center' }}>
-                      <select value={game.bet} disabled>
-                        <option value="1">1</option>
-                        <option value="X">X</option>
-                        <option value="2">2</option>
-                      </select>
-                    </td>
-                    <td>
-                      <input
-                        style={{
-                          width: '50px',
-                          backgroundColor: game.score
-                            ? isReadOnly(selectedUser, game.id)
-                              ? 'transparent'
-                              : 'white'
-                            : 'white',
-                          cursor: isReadOnly(selectedUser, game.id) ? 'not-allowed' : 'text',
-                          color: 'red',
-                        }}
-                        type="text"
-                        placeholder={isReadOnly(selectedUser, game.id) ? '✔️' : 'x:x'}
-                        value={game.score}
-                        onChange={(e) => handleScoreChange(game.id, e.target.value)}
-                        maxLength="3"
-                        readOnly={areInputsEditable && isReadOnly(selectedUser, game.id)}
-                        title={areInputsEditable && isReadOnly(selectedUser, game.id) ? '✔️' : ''}
-                        disabled={areInputsEditable && gameStarted(game.date, game.kickoff)}
-                      />
-                    </td>
-                  </tr>
-                </React.Fragment>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" style={{ textAlign: 'center', padding:'5%' }}>
-                  <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#00FFAA', fontFamily:"Rubik", textAlign:"center"}}>
-              To już koniec rundy – dzięki za wspólną zabawę!
-            </p>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-        <button
-            style={{ backgroundColor: '#DC3545', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'inline-block', margin: '10px', fontSize: '14px', width: '60%', transition: 'background-color 0.3s' }}
-            onClick={handleSubmit}
-          >
-            Prześlij
-          </button>
-          {isDataSubmitted && Object.keys(submittedData).map((user) => (
-          <ExpandableCard key={user} user={user} bets={submittedData[user]} results={results} />))}
+      {kolejki[currentKolejkaIndex]?.games.map(game => (
+        <div key={game.id}>
+          {game.home} - {game.away}
+          <input
+            value={game.score || ''}
+            onChange={(e) => handleScoreChange(game.id, e.target.value)}
+            placeholder="x:x"
+          />
         </div>
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-  <button
-    style={{
-      backgroundColor: '#28a745', 
-      color: 'white', 
-      padding: '10px 20px', 
-      border: 'none', 
-      borderRadius: '5px', 
-      marginRight: '10px', 
-      cursor: 'pointer'
-    }}
-    onClick={toggleEditableOff}
-  >
-    
-  </button>
-  <button
-    style={{
-      backgroundColor: '#007bff', 
-      color: 'white', 
-      padding: '10px 20px', 
-      border: 'none', 
-      borderRadius: '5px', 
-      cursor: 'pointer'
-    }}
-    onClick={toggleEditableOn}
-  >
-   
-  </button>
-</div>
+      ))}
+
+      <div style={{ margin: '15px' }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={hideTypes[selectedUser]?.[currentKolejkaIndex] || false}
+            onChange={(e) => handleHideToggle(e.target.checked)}
+          />
+          Ukryj typy po wysłaniu
+        </label>
       </div>
-    
+
+      <button onClick={handleSubmit}>Prześlij</button>
+
+      {Object.keys(submittedData).map(user => (
+        <ExpandableCard
+          key={user}
+          user={user}
+          bets={submittedData[user]}
+          results={results}
+          hideTypes={hideTypes}
+        />
+      ))}
+    </div>
   );
 };
 
-  
 export default Bets;
