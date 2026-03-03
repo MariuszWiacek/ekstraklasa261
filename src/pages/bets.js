@@ -124,8 +124,8 @@ const Bets = () => {
   const toggleEditableOn = () => setAreInputsEditable(true);
 
   return (
-    <div className="fade-in" style={{ textAlign: 'center' }}>
-      Wybrany użytkownik :
+    <div className="fade-in" style={{ textAlign: 'center', color: 'yellow' }}>
+      Użytkownik : <br>
       <FontAwesomeIcon icon={faUser} style={{ marginRight: '8px', fontSize: '14px', color: 'yellow' }} />
       <select
         style={{ margin: '1px', backgroundColor: 'pink', fontWeight: 'bold', fontFamily: 'Rubik' }}
@@ -222,8 +222,8 @@ const Bets = () => {
       </div>
 
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <button style={{ backgroundColor: '#28a745', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={toggleEditableOff}>Editable Off</button>
-        <button style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={toggleEditableOn}>Editable On</button>
+        <button style={{ backgroundColor: '#28a745', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={toggleEditableOff}></button>
+        <button style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={toggleEditableOn}></button>
       </div>
     </div>
   );
