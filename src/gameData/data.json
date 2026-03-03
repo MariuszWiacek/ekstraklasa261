@@ -21,7 +21,7 @@
 {  "id": 18,"kolejkaId": 1, "home": "--------", "away": "--------", "kickoff": "", "date": "", "disabled": false },
 
 
-  { "id": 19, "kolejkaId": 20, "home": "Korona", "away": "Zagłębie", "kickoff": "18:00", "date": "2026-02-06", "disabled": true },
+  { "id": 19, "kolejkaId": 20, "home": "Korona", "away": "Zagłębie", "kickoff": "18:00", "date": "2026-02-06", "disabled": false },
   { "id": 20, "kolejkaId": 20, "home": "Lechia", "away": "Cracovia", "kickoff": "20:30", "date": "2026-02-06", "disabled": false },
   { "id": 21, "kolejkaId": 20, "home": "Arka", "away": "Legia", "kickoff": "14:45", "date": "2026-02-07", "disabled": false },
   { "id": 22, "kolejkaId": 20, "home": "Jagiellonia", "away": "Motor", "kickoff": "17:30", "date": "2026-02-07", "disabled": false },
