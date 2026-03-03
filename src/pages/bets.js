@@ -213,9 +213,8 @@ const Bets = () => {
           style={{ backgroundColor: '#DC3545', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'inline-block', margin: '10px', fontSize: '14px', width: '60%' }} 
           onClick={handleSubmit}
         >
-          Prześlij
-        </button>
-
+          Prześlij {isHiddenRound && '🔒'}
+                </button>
         {isDataSubmitted && Object.keys(submittedData).map((user) => (
           <ExpandableCard key={user} user={user} bets={submittedData[user]} results={results} />
         ))}
