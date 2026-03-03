@@ -37,7 +37,7 @@ const ExpandableCard = ({ user, bets, results }) => {
   };
 
   return (
-    <div className="card-container" style={{ backgroundColor: 'white', padding: '10px', borderRadius: '8px', marginBottom: '10px' }}>
+    <div className="paper-card" style={{ backgroundColor: 'white', padding: '10px', borderRadius: '8px', marginBottom: '10px' }}>
       <h4 className="header-style" onClick={() => setExpanded(!expanded)} style={{ cursor: 'pointer' }}>
         {user} {expanded ? '-' : '+'}
       </h4>
