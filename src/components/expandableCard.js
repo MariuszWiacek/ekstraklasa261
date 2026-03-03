@@ -63,8 +63,8 @@ const ExpandableCard = ({ user, bets, results }) => {
                   
                   {isHidden ? (
                     <>
-                      <span style={{ color: 'green' }}>Typ: [ ✔️ ]</span> |{' '}
-                      <span style={{ color: 'green' }}>[ ✔️ ]</span>
+                      <span style={{ color: 'green' }}>Typ: [ 🔒 ]</span> |{' '}
+                      <span style={{ color: 'green' }}>[ 🔒 ]</span>
                     </>
                   ) : (
                     <>
