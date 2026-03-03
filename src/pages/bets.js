@@ -49,7 +49,7 @@ const Bets = () => {
   const [results, setResults] = useState({});
   const [currentKolejkaIndex, setCurrentKolejkaIndex] = useState(0);
   const [areInputsEditable, setAreInputsEditable] = useState(true);
-  const [isHiddenActive, setIsHiddenActive] = useState(false); // New state
+  const [isHiddenActive, setIsHiddenActive] = useState(false);
 
   useEffect(() => {
     const lastChosenUser = localStorage.getItem('selectedUser');
@@ -92,12 +92,6 @@ const Bets = () => {
     setKolejki(updated);
   };
 
-  const handleUserChange = (e) => {
-    const user = e.target.value;
-    setSelectedUser(user);
-    localStorage.setItem('selectedUser', user);
-  };
-
   const handleSubmit = () => {
     if (!selectedUser) { alert('Proszę wybrać użytkownika.'); return; }
     const currentKolejka = kolejki[currentKolejkaIndex];
@@ -107,7 +101,7 @@ const Bets = () => {
         acc[game.id] = {
           home: game.home, away: game.away, score: game.score,
           bet: autoDetectBetType(game.score), kolejkaId: game.kolejkaId,
-          isHidden: isHiddenActive // Pass the hidden state here
+          isHidden: isHiddenActive 
         };
       }
       return acc;
@@ -125,12 +119,11 @@ const Bets = () => {
 
   return (
     <div className="fade-in" style={{ textAlign: 'center', color: 'yellow' }}>
-      
       <FontAwesomeIcon icon={faUser} style={{ marginRight: '8px', fontSize: '14px', color: 'yellow' }} />
       <select
         style={{ margin: '1px', backgroundColor: 'pink', fontWeight: 'bold', fontFamily: 'Rubik' }}
         value={selectedUser}
-        onChange={handleUserChange}
+        onChange={(e) => { setSelectedUser(e.target.value); localStorage.setItem('selectedUser', e.target.value); }}
       >
         {Object.keys(usersData).map((user) => (<option key={user} value={user}>{user}</option>))}
       </select>
@@ -141,24 +134,24 @@ const Bets = () => {
         <table style={{ width: '100%', border: '0.5px solid #444', borderCollapse: 'collapse', marginTop: '5%' }}>
           <thead>
             <tr>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}></th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Gospodarz</th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}></th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Gość</th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Wynik</th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>1X2</th>
-              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Typ</th>
+              <th style={{ borderBottom: '0.5px solid #444' }}></th>
+              <th style={{ borderBottom: '0.5px solid #444' }}>Gospodarz</th>
+              <th style={{ borderBottom: '0.5px solid #444' }}></th>
+              <th style={{ borderBottom: '0.5px solid #444' }}>Gość</th>
+              <th style={{ borderBottom: '0.5px solid #444' }}>Wynik</th>
+              <th style={{ borderBottom: '0.5px solid #444' }}>1X2</th>
+              <th style={{ borderBottom: '0.5px solid #444' }}>Typ</th>
             </tr>
           </thead>
           <tbody>
             {kolejki[currentKolejkaIndex]?.games.map((game, index) => (
               <React.Fragment key={index}>
-                <tr style={{ opacity: game.disabled ? '0.5' : '1', pointerEvents: game.disabled ? 'none' : 'auto', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
+                <tr style={{ opacity: game.disabled ? '0.5' : '1', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
                   <td colSpan="12" className="date" style={{ textAlign: 'left', color: 'gold', fontSize: '10px', paddingLeft: '10%' }}>
                     &nbsp;&nbsp;&nbsp; {game.date} &nbsp;&nbsp;&nbsp; {game.kickoff} &nbsp;&nbsp;&nbsp; {game.message}
                   </td>
                 </tr>
-                <tr style={{ borderBottom: '1px solid #444', opacity: game.disabled ? '0.5' : '1', pointerEvents: game.disabled ? 'none' : 'auto', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
+                <tr style={{ borderBottom: '1px solid #444', opacity: game.disabled ? '0.5' : '1', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
                   <td><p style={{ color: 'grey' }}>{game.id}.</p></td>
                   <td style={{ textAlign: 'center', paddingRight: '10px', fontSize: '20px' }}>
                     <img src={getTeamLogo(game.home)} className="logo" /> {game.home}
@@ -178,7 +171,6 @@ const Bets = () => {
                       style={{ 
                         width: '50px', 
                         backgroundColor: game.score ? isReadOnly(selectedUser, game.id) ? 'transparent' : 'white' : 'white', 
-                        cursor: isReadOnly(selectedUser, game.id) ? 'not-allowed' : 'text', 
                         color: 'red' 
                       }}
                       type="text"
@@ -196,7 +188,6 @@ const Bets = () => {
           </tbody>
         </table>
 
-        {/* Restore hidden checkbox area */}
         <div style={{ marginTop: '15px' }}>
           <label style={{ color: 'white', fontSize: '12px', cursor: 'pointer' }}>
             <input 
@@ -205,7 +196,7 @@ const Bets = () => {
               onChange={(e) => setIsHiddenActive(e.target.checked)} 
               style={{ marginRight: '5px' }}
             />
-            Ukryj moje typy (v)
+            Ukryj moje typy 🔒
           </label>
         </div>
 
@@ -213,16 +204,17 @@ const Bets = () => {
           style={{ backgroundColor: '#DC3545', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'inline-block', margin: '10px', fontSize: '14px', width: '60%' }} 
           onClick={handleSubmit}
         >
-          Prześlij {isHiddenRound && '🔒'}
-                </button>
+          Prześlij {isHiddenActive ? '🔒' : ''}
+        </button>
+
         {isDataSubmitted && Object.keys(submittedData).map((user) => (
           <ExpandableCard key={user} user={user} bets={submittedData[user]} results={results} />
         ))}
       </div>
 
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <button style={{ backgroundColor: '#28a745', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={toggleEditableOff}> </button>
-        <button style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={toggleEditableOn}> </button>
+        <button style={{ backgroundColor: '#28a745', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={toggleEditableOff}>Off</button>
+        <button style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={toggleEditableOn}>On</button>
       </div>
     </div>
   );
