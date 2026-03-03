@@ -37,8 +37,8 @@ const ExpandableCard = ({ user, bets, results }) => {
   };
 
   return (
-    <div className="card-container">
-      <h4 className="header-style" onClick={() => setExpanded(!expanded)}>
+    <div className="card-container" style={{ backgroundColor: 'white', padding: '10px', borderRadius: '8px', marginBottom: '10px' }}>
+      <h4 className="header-style" onClick={() => setExpanded(!expanded)} style={{ cursor: 'pointer' }}>
         {user} {expanded ? '-' : '+'}
       </h4>
 
@@ -52,30 +52,33 @@ const ExpandableCard = ({ user, bets, results }) => {
           />
 
           {groupedBets[currentKolejka]?.map((bet) => {
-            // New functionality: Auto-reveal if results[bet.id] exists
-            const shouldHide = bet.isHidden && !results[bet.id];
+            // New logic: hide only if flagged AND result is not yet available
+            const isHidden = bet.isHidden && !results[bet.id];
 
             return (
-              <div key={bet.id} style={{ fontSize: '10px' }}>
-                <span style={{ color: 'black' }}>{bet.home} vs. {bet.away} |{' '}</span>
-                
-                {shouldHide ? (
-                  <>
-                    <span style={{ color: 'green' }}>Typ: [ ✔️ ]</span> |{' '}
-                    <span style={{ color: 'green' }}>[ ✔️ ]</span>
-                  </>
-                ) : (
-                  <>
-                    <span style={{ color: 'blue' }}>Typ: [ {bet.bet} ]</span> |{' '}
-                    <span style={{ color: 'black' }}>{bet.score}</span>
-                  </>
-                )}
+              <div key={bet.id} style={{ marginBottom: '5px' }}>
+                <div style={{ fontSize: '10px' }}>
+                  <span style={{ color: 'black' }}>{bet.home} vs. </span>
+                  <span style={{ color: 'black' }}>{bet.away} |{' '}</span>
+                  
+                  {isHidden ? (
+                    <>
+                      <span style={{ color: 'green' }}>Typ: [ ✔️ ]</span> |{' '}
+                      <span style={{ color: 'green' }}>[ ✔️ ]</span>
+                    </>
+                  ) : (
+                    <>
+                      <span style={{ color: 'blue' }}>Typ: [ {bet.bet} ]</span> |{' '}
+                      <span style={{ color: 'black' }}>{bet.score}</span>
+                    </>
+                  )}
 
-                <span className="results-style"> Wynik: </span>
-                <span>{results[bet.id]}</span>
-                
-                {!shouldHide && bet.score === results[bet.id] && <span className="correct-score">✅</span>}
-                {!shouldHide && getTypeFromResult(results[bet.id]) === bet.bet && <span className="correct-type">☑️</span>}
+                  <span className="results-style"> Wynik: </span>
+                  <span style={{ color: 'black' }}>{results[bet.id]}</span>
+                  
+                  {!isHidden && bet.score === results[bet.id] && <span className="correct-score">✅</span>}
+                  {!isHidden && getTypeFromResult(results[bet.id]) === bet.bet && <span className="correct-type">☑️</span>}
+                </div>
               </div>
             );
           })}
