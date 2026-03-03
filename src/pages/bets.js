@@ -10,7 +10,7 @@ import { initializeApp, getApps } from 'firebase/app';
 import ExpandableCard from '../components/expandableCard';
 import Pagination from '../components/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from 'luxon';
 
 const firebaseConfig = {
@@ -49,7 +49,7 @@ const Bets = () => {
   const [results, setResults] = useState({});
   const [currentKolejkaIndex, setCurrentKolejkaIndex] = useState(0);
   const [areInputsEditable, setAreInputsEditable] = useState(true);
-  const [isHiddenBet, setIsHiddenBet] = useState(false);
+  const [isHiddenActive, setIsHiddenActive] = useState(false); // New state
 
   useEffect(() => {
     const lastChosenUser = localStorage.getItem('selectedUser');
@@ -92,6 +92,12 @@ const Bets = () => {
     setKolejki(updated);
   };
 
+  const handleUserChange = (e) => {
+    const user = e.target.value;
+    setSelectedUser(user);
+    localStorage.setItem('selectedUser', user);
+  };
+
   const handleSubmit = () => {
     if (!selectedUser) { alert('Proszę wybrać użytkownika.'); return; }
     const currentKolejka = kolejki[currentKolejkaIndex];
@@ -101,20 +107,21 @@ const Bets = () => {
         acc[game.id] = {
           home: game.home, away: game.away, score: game.score,
           bet: autoDetectBetType(game.score), kolejkaId: game.kolejkaId,
-          isHidden: isHiddenBet // New field
+          isHidden: isHiddenActive // Pass the hidden state here
         };
       }
       return acc;
     }, {});
 
-    if (Object.keys(newBetsToSubmit).length === 0) { alert("Brak nowych zakładów."); return; }
+    if (Object.keys(newBetsToSubmit).length === 0) { alert("Wszystkie zakłady zostały już przesłane."); return; }
     update(ref(database, `submittedData/${selectedUser}`), newBetsToSubmit)
-      .then(() => alert('Wysłano pomyślnie!'))
+      .then(() => alert('Zakłady zostały pomyślnie przesłane!'))
       .catch((error) => console.error('Błąd:', error));
   };
 
   const getTeamLogo = (name) => teamsData[name]?.logo || '';
   const toggleEditableOff = () => setAreInputsEditable(false);
+  const toggleEditableOn = () => setAreInputsEditable(true);
 
   return (
     <div className="fade-in" style={{ textAlign: 'center' }}>
@@ -123,7 +130,7 @@ const Bets = () => {
       <select
         style={{ margin: '1px', backgroundColor: 'pink', fontWeight: 'bold', fontFamily: 'Rubik' }}
         value={selectedUser}
-        onChange={(e) => { setSelectedUser(e.target.value); localStorage.setItem('selectedUser', e.target.value); }}
+        onChange={handleUserChange}
       >
         {Object.keys(usersData).map((user) => (<option key={user} value={user}>{user}</option>))}
       </select>
@@ -134,42 +141,53 @@ const Bets = () => {
         <table style={{ width: '100%', border: '0.5px solid #444', borderCollapse: 'collapse', marginTop: '5%' }}>
           <thead>
             <tr>
-              <th style={{ borderBottom: '0.5px solid #444' }}></th>
-              <th style={{ borderBottom: '0.5px solid #444' }}>Gospodarz</th>
-              <th style={{ borderBottom: '0.5px solid #444' }}></th>
-              <th style={{ borderBottom: '0.5px solid #444' }}>Gość</th>
-              <th style={{ borderBottom: '0.5px solid #444' }}>Wynik</th>
-              <th style={{ borderBottom: '0.5px solid #444' }}>1X2</th>
-              <th style={{ borderBottom: '0.5px solid #444' }}>Typ</th>
+              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}></th>
+              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Gospodarz</th>
+              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}></th>
+              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Gość</th>
+              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Wynik</th>
+              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>1X2</th>
+              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'center' }}>Typ</th>
             </tr>
           </thead>
           <tbody>
             {kolejki[currentKolejkaIndex]?.games.map((game, index) => (
               <React.Fragment key={index}>
-                <tr style={{ backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
+                <tr style={{ opacity: game.disabled ? '0.5' : '1', pointerEvents: game.disabled ? 'none' : 'auto', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
                   <td colSpan="12" className="date" style={{ textAlign: 'left', color: 'gold', fontSize: '10px', paddingLeft: '10%' }}>
-                    {game.date} &nbsp; {game.kickoff}
+                    &nbsp;&nbsp;&nbsp; {game.date} &nbsp;&nbsp;&nbsp; {game.kickoff} &nbsp;&nbsp;&nbsp; {game.message}
                   </td>
                 </tr>
-                <tr style={{ borderBottom: '1px solid #444', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
+                <tr style={{ borderBottom: '1px solid #444', opacity: game.disabled ? '0.5' : '1', pointerEvents: game.disabled ? 'none' : 'auto', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
                   <td><p style={{ color: 'grey' }}>{game.id}.</p></td>
-                  <td style={{ textAlign: 'center', fontSize: '20px' }}><img src={getTeamLogo(game.home)} className="logo" /> {game.home}</td>
-                  <td>-</td>
-                  <td style={{ textAlign: 'left', fontSize: '20px' }}><img src={getTeamLogo(game.away)} className="logo" /> {game.away}</td>
+                  <td style={{ textAlign: 'center', paddingRight: '10px', fontSize: '20px' }}>
+                    <img src={getTeamLogo(game.home)} className="logo" /> {game.home}
+                  </td>
+                  <td style={{ textAlign: 'center', fontSize: '20px' }}>-</td>
+                  <td style={{ textAlign: 'left', paddingLeft: '10px', fontSize: '20px' }}>
+                    <img src={getTeamLogo(game.away)} className="logo" /> {game.away}
+                  </td>
                   <td style={{ textAlign: 'center', fontSize: '20px' }}>{results[game.id]}</td>
-                  <td>
+                  <td style={{ textAlign: 'center' }}>
                     <select value={game.bet} disabled>
                       <option value="1">1</option><option value="X">X</option><option value="2">2</option>
                     </select>
                   </td>
                   <td>
                     <input
-                      style={{ width: '50px', color: 'red', backgroundColor: 'white' }}
+                      style={{ 
+                        width: '50px', 
+                        backgroundColor: game.score ? isReadOnly(selectedUser, game.id) ? 'transparent' : 'white' : 'white', 
+                        cursor: isReadOnly(selectedUser, game.id) ? 'not-allowed' : 'text', 
+                        color: 'red' 
+                      }}
                       type="text"
                       placeholder={isReadOnly(selectedUser, game.id) ? '✔️' : 'x:x'}
-                      value={game.score || ''}
+                      value={game.score}
                       onChange={(e) => handleScoreChange(game.id, e.target.value)}
-                      disabled={areInputsEditable && (isReadOnly(selectedUser, game.id) || gameStarted(game.date, game.kickoff))}
+                      maxLength="3"
+                      readOnly={areInputsEditable && isReadOnly(selectedUser, game.id)}
+                      disabled={areInputsEditable && gameStarted(game.date, game.kickoff)}
                     />
                   </td>
                 </tr>
@@ -178,16 +196,21 @@ const Bets = () => {
           </tbody>
         </table>
 
-        {/* Hidden toggle placed above submit button */}
-        <div style={{ marginTop: '20px' }}>
-          <label style={{ color: isHiddenBet ? '#00FFAA' : 'white', cursor: 'pointer', fontSize: '12px' }}>
-            <input type="checkbox" checked={isHiddenBet} onChange={(e) => setIsHiddenBet(e.target.checked)} />
-            &nbsp; Ukryj moje typy <FontAwesomeIcon icon={faEyeSlash} />
+        {/* Restore hidden checkbox area */}
+        <div style={{ marginTop: '15px' }}>
+          <label style={{ color: 'white', fontSize: '12px', cursor: 'pointer' }}>
+            <input 
+              type="checkbox" 
+              checked={isHiddenActive} 
+              onChange={(e) => setIsHiddenActive(e.target.checked)} 
+              style={{ marginRight: '5px' }}
+            />
+            Ukryj moje typy (v)
           </label>
         </div>
 
         <button 
-          style={{ backgroundColor: '#DC3545', color: 'white', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', margin: '10px', width: '60%' }} 
+          style={{ backgroundColor: '#DC3545', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'inline-block', margin: '10px', fontSize: '14px', width: '60%' }} 
           onClick={handleSubmit}
         >
           Prześlij
@@ -196,6 +219,11 @@ const Bets = () => {
         {isDataSubmitted && Object.keys(submittedData).map((user) => (
           <ExpandableCard key={user} user={user} bets={submittedData[user]} results={results} />
         ))}
+      </div>
+
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <button style={{ backgroundColor: '#28a745', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={toggleEditableOff}>Editable Off</button>
+        <button style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={toggleEditableOn}>Editable On</button>
       </div>
     </div>
   );
