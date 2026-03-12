@@ -213,8 +213,8 @@ const Bets = () => {
       </div>
 
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <button style={{ backgroundColor: '#28a745', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={toggleEditableOff}>Off</button>
-        <button style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={toggleEditableOn}>On</button>
+        <button style={{ backgroundColor: '#28a745', color: 'white', padding: '1px 2px', border: 'none', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={toggleEditableOff}>..</button>
+        <button style={{ backgroundColor: '#007bff', color: 'white', padding: '1px 2px', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={toggleEditableOn}>..</button>
       </div>
     </div>
   );
