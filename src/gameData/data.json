@@ -87,11 +87,13 @@
 { "id": 68, "kolejkaId": 25, "home": "Cracovia", "away": "Wisła", "kickoff": "20:15", "date": "2026-03-14", "disabled": false },
 
 
-{ "id": 70, "kolejkaId": 25, "home": "Górnik", "away": "Raków", "kickoff": "17:30", "date": "2026-03-15", "disabled": false },
+
 
 { "id": 66, "kolejkaId": 25, "home": "Arka", "away": "Widzew", "kickoff": "12:15", "date": "2026-03-15", "disabled": false },
 
 { "id": 71, "kolejkaId": 25, "home": "Zagłębie", "away": "Lech", "kickoff": "14:45", "date": "2026-03-15", "disabled": false },
+
+{ "id": 70, "kolejkaId": 25, "home": "Górnik", "away": "Raków", "kickoff": "17:30", "date": "2026-03-15", "disabled": false },
 
 { "id": 72, "kolejkaId": 25, "home": "Pogoń", "away": "Korona", "kickoff": "19:00", "date": "2026-03-16", "disabled": false }
 ]
