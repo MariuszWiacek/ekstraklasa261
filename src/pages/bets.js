@@ -41,6 +41,9 @@ const groupGamesIntoKolejki = (games) => {
   return kolejki;
 };
 
+// Function to check if a game is frozen (games 12-18)
+const isFrozenGame = (gameId) => gameId >= 12 && gameId <= 18;
+
 const Bets = () => {
   const [kolejki, setKolejki] = useState(groupGamesIntoKolejki(gameData));
   const [selectedUser, setSelectedUser] = useState('');
@@ -83,6 +86,9 @@ const Bets = () => {
   };
 
   const handleScoreChange = (gameId, scoreInput) => {
+    // Prevent changes to frozen games
+    if (isFrozenGame(gameId)) return;
+    
     const cleaned = scoreInput.replace(/[^0-9:]/g, '');
     const formatted = cleaned.replace(/^(?:(\d))([^:]*$)/, '$1:$2');
     const updated = kolejki.map(kolejka => ({
@@ -97,7 +103,8 @@ const Bets = () => {
     const currentKolejka = kolejki[currentKolejkaIndex];
     const userSubmittedBets = submittedData[selectedUser] || {};
     const newBetsToSubmit = currentKolejka.games.reduce((acc, game) => {
-      if (game.score && !userSubmittedBets[game.id]) {
+      // Prevent submission of bets for frozen games
+      if (game.score && !userSubmittedBets[game.id] && !isFrozenGame(game.id)) {
         acc[game.id] = {
           home: game.home, away: game.away, score: game.score,
           bet: autoDetectBetType(game.score), kolejkaId: game.kolejkaId,
@@ -146,12 +153,12 @@ const Bets = () => {
           <tbody>
             {kolejki[currentKolejkaIndex]?.games.map((game, index) => (
               <React.Fragment key={index}>
-                <tr style={{ opacity: game.disabled ? '0.5' : '1', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
+                <tr style={{ opacity: game.disabled || isFrozenGame(game.id) ? '0.5' : '1', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
                   <td colSpan="12" className="date" style={{ textAlign: 'left', color: 'gold', fontSize: '10px', paddingLeft: '10%' }}>
-                    &nbsp;&nbsp;&nbsp; {game.date} &nbsp;&nbsp;&nbsp; {game.kickoff} &nbsp;&nbsp;&nbsp; {game.message}
+                    &nbsp;&nbsp;&nbsp; {game.date} &nbsp;&nbsp;&nbsp; {game.kickoff} &nbsp;&nbsp;&nbsp; {game.message} {isFrozenGame(game.id) ? '🔒 ZAMROŻONE' : ''}
                   </td>
                 </tr>
-                <tr style={{ borderBottom: '1px solid #444', opacity: game.disabled ? '0.5' : '1', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
+                <tr style={{ borderBottom: '1px solid #444', opacity: game.disabled || isFrozenGame(game.id) ? '0.5' : '1', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
                   <td><p style={{ color: 'grey' }}>{game.id}.</p></td>
                   <td style={{ textAlign: 'center', paddingRight: '10px', fontSize: '20px' }}>
                     <img src={getTeamLogo(game.home)} className="logo" /> {game.home}
@@ -170,7 +177,7 @@ const Bets = () => {
                     <input
                       style={{ 
                         width: '50px', 
-                        backgroundColor: game.score ? isReadOnly(selectedUser, game.id) ? 'transparent' : 'white' : 'white', 
+                        backgroundColor: isFrozenGame(game.id) ? '#ddd' : game.score ? isReadOnly(selectedUser, game.id) ? 'transparent' : 'white' : 'white', 
                         color: 'red' 
                       }}
                       type="text"
@@ -179,7 +186,7 @@ const Bets = () => {
                       onChange={(e) => handleScoreChange(game.id, e.target.value)}
                       maxLength="3"
                       readOnly={areInputsEditable && isReadOnly(selectedUser, game.id)}
-                      disabled={areInputsEditable && gameStarted(game.date, game.kickoff)}
+                      disabled={areInputsEditable && (gameStarted(game.date, game.kickoff) || isFrozenGame(game.id))}
                     />
                   </td>
                 </tr>
