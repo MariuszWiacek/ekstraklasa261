@@ -95,5 +95,35 @@
 
 { "id": 70, "kolejkaId": 25, "home": "Górnik", "away": "Raków", "kickoff": "17:30", "date": "2026-03-15", "disabled": false },
 
-{ "id": 72, "kolejkaId": 25, "home": "Pogoń", "away": "Korona", "kickoff": "19:00", "date": "2026-03-16", "disabled": false }
+{ "id": 72, "kolejkaId": 25, "home": "Pogoń", "away": "Korona", "kickoff": "19:00", "date": "2026-03-16", "disabled": false },
+
+{ "id": 73, "kolejkaId": 26, "home": "Piast", "away": "Radomiak", "kickoff": "18:00", "date": "2026-03-20", "disabled": false },
+{ "id": 74, "kolejkaId": 26, "home": "Motor", "away": "Zagłębie", "kickoff": "20:30", "date": "2026-03-20", "disabled": false },
+{ "id": 75, "kolejkaId": 26, "home": "Cracovia", "away": "GKS", "kickoff": "14:45", "date": "2026-03-21", "disabled": false },
+{ "id": 76, "kolejkaId": 26, "home": "Jagiellonia", "away": "Wisła", "kickoff": "20:15", "date": "2026-03-21", "disabled": false },
+{ "id": 77, "kolejkaId": 26, "home": "Lechia", "away": "Pogoń", "kickoff": "17:30", "date": "2026-03-21", "disabled": false },
+{ "id": 78, "kolejkaId": 26, "home": "Lech", "away": "Termalica", "kickoff": "14:45", "date": "2026-03-22", "disabled": false },
+{ "id": 79, "kolejkaId": 26, "home": "Korona", "away": "Arka", "kickoff": "12:15", "date": "2026-03-22", "disabled": false },
+{ "id": 80, "kolejkaId": 26, "home": "Legia", "away": "Raków", "kickoff": "20:15", "date": "2026-03-22", "disabled": false },
+{ "id": 81, "kolejkaId": 26, "home": "Widzew", "away": "Górnik", "kickoff": "17:30", "date": "2026-03-22", "disabled": false },
+
+{ "id": 82, "kolejkaId": 27, "home": "GKS", "away": "Wisła", "kickoff": "12:15", "date": "2026-04-04", "disabled": false },
+{ "id": 83, "kolejkaId": 27, "home": "Górnik", "away": "Cracovia", "kickoff": "17:30", "date": "2026-04-04", "disabled": false },
+{ "id": 84, "kolejkaId": 27, "home": "Jagiellonia", "away": "Lech", "kickoff": "20:15", "date": "2026-04-04", "disabled": false },
+{ "id": 85, "kolejkaId": 27, "home": "Raków", "away": "Widzew", "kickoff": "14:45", "date": "2026-04-04", "disabled": false },
+{ "id": 86, "kolejkaId": 27, "home": "Termalica", "away": "Piast", "kickoff": "12:15", "date": "2026-04-06", "disabled": false },
+{ "id": 87, "kolejkaId": 27, "home": "Lechia", "away": "Korona", "kickoff": "20:15", "date": "2026-04-06", "disabled": false },
+{ "id": 88, "kolejkaId": 27, "home": "Pogoń", "away": "Legia", "kickoff": "17:30", "date": "2026-04-06", "disabled": false },
+{ "id": 89, "kolejkaId": 27, "home": "Radomiak", "away": "Motor", "kickoff": "14:45", "date": "2026-04-06", "disabled": false },
+{ "id": 90, "kolejkaId": 27, "home": "Arka", "away": "Zagłębie", "kickoff": "19:00", "date": "2026-04-07", "disabled": false },
+
+{ "id": 91, "kolejkaId": 28, "home": "Korona", "away": "Jagiellonia", "kickoff": "20:30", "date": "2026-04-10", "disabled": false },
+{ "id": 92, "kolejkaId": 28, "home": "Wisła", "away": "Lechia", "kickoff": "18:00", "date": "2026-04-10", "disabled": false },
+{ "id": 93, "kolejkaId": 28, "home": "Lech", "away": "GKS", "kickoff": "17:30", "date": "2026-04-12", "disabled": false },
+{ "id": 94, "kolejkaId": 28, "home": "Motor", "away": "Raków", "kickoff": "14:45", "date": "2026-04-12", "disabled": false },
+{ "id": 95, "kolejkaId": 28, "home": "Cracovia", "away": "Arka", "kickoff": "12:15", "date": "2026-04-12", "disabled": false },
+{ "id": 96, "kolejkaId": 28, "home": "Legia", "away": "Górnik", "kickoff": "20:15", "date": "2026-04-11", "disabled": false },
+{ "id": 97, "kolejkaId": 28, "home": "Widzew", "away": "Termalica", "kickoff": "14:45", "date": "2026-04-11", "disabled": false },
+{ "id": 98, "kolejkaId": 28, "home": "Zagłębie", "away": "Radomiak", "kickoff": "17:30", "date": "2026-04-11", "disabled": false },
+{ "id": 99, "kolejkaId": 28, "home": "Piast", "away": "Pogoń", "kickoff": "19:00", "date": "2026-04-13", "disabled": false }
 ]
