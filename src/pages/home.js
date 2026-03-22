@@ -5,7 +5,7 @@ import TeamLogos from '../components/teamLogos';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { Link } from 'react-router-dom';
-
+import InstallPWAButton from "../components/PWA";
 
 const Home = () => {
     return (
@@ -13,6 +13,8 @@ const Home = () => {
         <div className="fade-in">
             <h1 style={welcomeMessageStyle}>Typer LIGI POLSKIEJ - Wiosna 2026</h1>
             <TeamLogos />
+           
+            
             <Container fluid style={linkContainerStyle}>
                 <Row>
                 <Col md={6} className="spde-in">

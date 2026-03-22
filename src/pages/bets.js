@@ -12,6 +12,7 @@ import Pagination from '../components/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { DateTime } from 'luxon';
+import InstallPWAButton from '../components/PWA';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB3AOrOzAQ-WVMjeZ3ayNwklR7axBgXJ0I",
@@ -195,7 +196,7 @@ return (
           onPageChange={(page) => setCurrentKolejkaIndex(page)}
           label="Kolejka"
         />
-
+<div> <InstallPWAButton /></div>
         <table style={{ width: '100%', border: '0.5px solid #444', borderCollapse: 'collapse', marginTop: '5%' }}>
           <thead>
             <tr>
