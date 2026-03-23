@@ -2,16 +2,11 @@ import React, { useEffect, useState } from "react";
 
 const InstallPWAButton = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showIOS, setShowIOS] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
-    // Detect iOS
-    const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-
-    if (isIOS && !isStandalone) {
-      setShowIOS(true);
-    }
+    const ios = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    setIsIOS(ios);
 
     const handler = (e) => {
       e.preventDefault();
@@ -24,31 +19,26 @@ const InstallPWAButton = () => {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-
-    console.log("User choice:", outcome);
-    setDeferredPrompt(null);
+  const handleClick = async () => {
+    // Android install
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log("User choice:", outcome);
+      setDeferredPrompt(null);
+    } 
+    // iPhone fallback
+    else if (isIOS) {
+      alert("Kliknij Udostępnij → Do ekranu głównego");
+    } 
+    // Not ready yet
+    else {
+      alert("Instalacja jeszcze niedostępna — użyj aplikacji chwilę i spróbuj ponownie");
+    }
   };
 
-  // iOS fallback
-  if (showIOS) {
-    return (
-      <div style={iosStyle}>
-        📲 Zainstaluj aplikację: <br />
-        kliknij <strong>Udostępnij</strong> → <strong>Do ekranu głównego</strong>
-      </div>
-    );
-  }
-
-  // Android button
-  if (!deferredPrompt) return null;
-
   return (
-    <button onClick={handleInstallClick} style={buttonStyle}>
+    <button onClick={handleClick} style={buttonStyle}>
       📲 Zainstaluj aplikację
     </button>
   );
@@ -63,16 +53,8 @@ const buttonStyle = {
   marginTop: "15px",
   cursor: "pointer",
   fontWeight: "bold",
-  fontSize: "16px"
-};
-
-const iosStyle = {
-  background: "#333",
-  color: "#fff",
-  padding: "12px",
-  borderRadius: "10px",
-  marginTop: "15px",
-  textAlign: "center"
+  fontSize: "16px",
+  display: "block"
 };
 
 export default InstallPWAButton;
