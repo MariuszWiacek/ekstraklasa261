@@ -5,7 +5,7 @@ import TeamLogos from '../components/teamLogos';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { Link } from 'react-router-dom';
-import InstallPWAButton from "./components/PWA";
+import InstallPWAButton from "../components/PWA";
 
 const Home = () => {
     return (
