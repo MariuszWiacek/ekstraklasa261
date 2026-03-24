@@ -4,25 +4,33 @@ const InstallPWAButton = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);
 
   useEffect(() => {
-    // 1. Check if already installed
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    // Check if already installed
+    if (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true
+    ) {
       setIsInstalled(true);
     }
 
-    // 2. Check for iOS
-    const ios = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    // Detect iOS
+    const ios =
+      /iphone|ipad|ipod/i.test(window.navigator.userAgent) &&
+      !window.MSStream;
     setIsIOS(ios);
 
-    // 3. Listen for the install prompt
+    // Listen for install prompt
     const handler = (e) => {
       e.preventDefault();
-      console.log("✅ PWA Install Prompt Ready");
+      console.log("✅ Install prompt available");
       setDeferredPrompt(e);
+      setCanInstall(true);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
+
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
@@ -30,16 +38,24 @@ const InstallPWAButton = () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') setDeferredPrompt(null);
+
+      if (outcome === "accepted") {
+        console.log("✅ User installed app");
+      }
+
+      setDeferredPrompt(null);
+      setCanInstall(false);
     } else if (isIOS) {
-      alert("Na iPhone: Kliknij 'Udostępnij' (kwadrat ze strzałką) i wybierz 'Do ekranu początkowego' 📲");
+      alert(
+        "Na iPhone: Kliknij 'Udostępnij' i wybierz 'Do ekranu początkowego' 📲"
+      );
     } else {
-      alert("Instalacja jest obecnie obsługiwana przez Twoją przeglądarkę. Spróbuj odświeżyć stronę lub sprawdź menu przeglądarki.");
+      alert("Instalacja niedostępna — odśwież stronę lub użyj Chrome.");
     }
   };
 
-  // Hide button if already installed
-  if (isInstalled) return null;
+  // Hide if installed OR not ready (except iOS)
+  if (isInstalled || (!canInstall && !isIOS)) return null;
 
   return (
     <button onClick={handleClick} style={buttonStyle}>
@@ -58,7 +74,6 @@ const buttonStyle = {
   fontWeight: "bold",
   fontSize: "16px",
   boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
-  transition: "transform 0.2s"
 };
 
 export default InstallPWAButton;
