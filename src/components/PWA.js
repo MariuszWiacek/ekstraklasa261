@@ -52,10 +52,10 @@ const InstallPWAButton = () => {
       setCanInstall(false);
     } else if (isIOS) {
       alert(
-        "Na iPhone: Kliknij 'Udostępnij' i wybierz 'Do ekranu początkowego' 📲"
+        "Na iPhone: Kliknij 'Udostępnij' i wybierz 'Dodaj do ekranu początkowego' 📲"
       );
     } else {
-      alert("Instalacja niedostępna — odśwież stronę i kliknij stronę.");
+      alert("Instalacja chwilowo niedostępna");
     }
   };
 
@@ -63,7 +63,7 @@ const InstallPWAButton = () => {
 
   return (
     <button onClick={handleClick} style={buttonStyle}>
-      {canInstall ? "📲 Zainstaluj aplikację" : "📲 Odśwież aby zainstalować"}
+      {canInstall ? "📲 Zainstaluj aplikację" : "📲 Instalacja chwilowo niedostępna"}
     </button>
   );
 };
