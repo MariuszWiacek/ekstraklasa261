@@ -8,7 +8,17 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-// ✅ REQUIRED: real fetch handler (not empty)
 self.addEventListener("fetch", (event) => {
-  event.respondWith(fetch(event.request));
+  // ✅ Only handle GET requests (important!)
+  if (event.request.method !== "GET") return;
+
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      // fallback if offline
+      return new Response("Offline", {
+        status: 503,
+        statusText: "Offline",
+      });
+    })
+  );
 });
