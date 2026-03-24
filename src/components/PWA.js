@@ -1,91 +1,75 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const InstallPWAButton = () => {
-  const deferredPromptRef = useRef(null);
-
-  const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
   const [canInstall, setCanInstall] = useState(false);
 
   useEffect(() => {
-    // Detect if app is already installed
-    const standalone =
+    if (
       window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone === true;
-    setIsInstalled(standalone);
+      window.navigator.standalone === true
+    ) {
+      setIsInstalled(true);
+    }
 
-    // Detect iOS
     const ios =
       /iphone|ipad|ipod/i.test(window.navigator.userAgent) &&
       !window.MSStream;
     setIsIOS(ios);
 
-    // Listen for Chrome/Android install prompt
-    const handleBeforeInstallPrompt = (e) => {
-      e.preventDefault(); // Prevent automatic banner
-      deferredPromptRef.current = e; // Save for later
-      setCanInstall(true); // Show button
-      console.log("🔥 beforeinstallprompt fired");
+    // Check global event
+    if (window.deferredPrompt) {
+      setCanInstall(true);
+    }
+
+    // Fallback listener
+    const handler = (e) => {
+      e.preventDefault();
+      console.log("🔥 REACT EVENT FIRED");
+      window.deferredPrompt = e;
+      setCanInstall(true);
     };
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("beforeinstallprompt", handler);
 
     return () =>
-      window.removeEventListener(
-        "beforeinstallprompt",
-        handleBeforeInstallPrompt
-      );
+      window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  const handleInstallClick = async () => {
-    const promptEvent = deferredPromptRef.current;
+  const handleClick = async () => {
+    const promptEvent = window.deferredPrompt;
 
-    // Chrome/Android install available
+    console.log("Prompt object:", promptEvent);
+
     if (promptEvent) {
       promptEvent.prompt();
+
       const { outcome } = await promptEvent.userChoice;
       console.log("User choice:", outcome);
 
-      deferredPromptRef.current = null;
+      window.deferredPrompt = null;
       setCanInstall(false);
-      return;
-    }
-
-    // iOS manual install
-    if (isIOS) {
+    } else if (isIOS) {
       alert(
-        "📲 Na iPhone:\n1. Kliknij Udostępnij (📤)\n2. Wybierz 'Do ekranu początkowego'"
+        "Na iPhone: Kliknij 'Udostępnij' i wybierz 'Do ekranu początkowego' 📲"
       );
-      return;
+    } else {
+      alert("Instalacja niedostępna — odśwież stronę i kliknij stronę.");
     }
-
-    // Chrome blocked / uninstall case → redirect to “fresh URL” to retry install
-    const newURL = window.location.origin + "/?v=2";
-    alert(
-      "Nie można zainstalować bezpośrednio. Kliknij OK, aby spróbować ponownie."
-    );
-    window.location.href = newURL;
   };
 
-  // Hide button if app is already installed
   if (isInstalled) return null;
 
-  // Show button if iOS or install possible
-  if (!isIOS && !canInstall) return (
-    <button onClick={handleInstallClick} style={buttonStyle}>
-      📲 Zainstaluj aplikację
-    </button>
-  );
-
   return (
-    <button onClick={handleInstallClick} style={buttonStyle}>
-      {isIOS ? "📲 Dodaj do ekranu początkowego" : "📲 Zainstaluj aplikację"}
+    <button onClick={handleClick} style={buttonStyle}>
+      {canInstall ? "📲 Zainstaluj aplikację" : "📲 Odśwież aby zainstalować"}
     </button>
   );
 };
 
 const buttonStyle = {
-  background: "#00ff0dae",
+  background: "#00ff0d",
   color: "#000",
   padding: "12px 25px",
   border: "none",
