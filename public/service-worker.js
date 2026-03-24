@@ -1,13 +1,24 @@
+/* eslint-disable no-restricted-globals */
+const CACHE_NAME = 'ekstrabet-cache-v1';
+const urlsToCache = ['/'];
+
+// Install SW
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installing...');
-  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+  );
 });
 
+// Activate SW
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker activated');
-  return self.clients.claim();
+  event.waitUntil(self.clients.claim());
 });
 
+// REQUIRED FOR INSTALL BUTTON: Fetch handler
 self.addEventListener('fetch', (event) => {
-  // no caching yet
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
 });
