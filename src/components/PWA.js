@@ -4,10 +4,8 @@ const InstallPWAButton = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [canInstall, setCanInstall] = useState(false);
 
   useEffect(() => {
-    // Check if already installed
     if (
       window.matchMedia("(display-mode: standalone)").matches ||
       window.navigator.standalone === true
@@ -15,18 +13,15 @@ const InstallPWAButton = () => {
       setIsInstalled(true);
     }
 
-    // Detect iOS
     const ios =
       /iphone|ipad|ipod/i.test(window.navigator.userAgent) &&
       !window.MSStream;
     setIsIOS(ios);
 
-    // Listen for install prompt
     const handler = (e) => {
       e.preventDefault();
-      console.log("✅ Install prompt available");
+      console.log("🔥 INSTALL PROMPT FIRED");
       setDeferredPrompt(e);
-      setCanInstall(true);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
@@ -38,24 +33,18 @@ const InstallPWAButton = () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-
-      if (outcome === "accepted") {
-        console.log("✅ User installed app");
-      }
-
+      console.log("User choice:", outcome);
       setDeferredPrompt(null);
-      setCanInstall(false);
     } else if (isIOS) {
       alert(
         "Na iPhone: Kliknij 'Udostępnij' i wybierz 'Do ekranu początkowego' 📲"
       );
     } else {
-      alert("Instalacja niedostępna — odśwież stronę lub użyj Chrome.");
+      alert("Instalacja niedostępna — spróbuj odświeżyć stronę.");
     }
   };
 
-  // Hide if installed OR not ready (except iOS)
-  if (isInstalled || (!canInstall && !isIOS)) return null;
+  if (isInstalled) return null;
 
   return (
     <button onClick={handleClick} style={buttonStyle}>
