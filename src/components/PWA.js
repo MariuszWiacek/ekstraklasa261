@@ -62,10 +62,20 @@ const InstallPWAButton = () => {
   if (isInstalled) return null;
 
   return (
-    <button onClick={handleClick} style={buttonStyle}>
-      {canInstall ? "📲 Zainstaluj aplikację" : "📲 Instalacja chwilowo niedostępna"}
-    </button>
-  );
+  <button
+    onClick={handleClick}
+    style={{
+      ...buttonStyle,
+      opacity: canInstall ? 1 : 0.5,
+      cursor: canInstall ? "pointer" : "not-allowed",
+    }}
+    disabled={!canInstall}
+  >
+    {canInstall
+      ? "📲 Zainstaluj apkę"
+      : "📲 Apka chwilowo niedostępna"}
+  </button>
+);
 };
 
 const buttonStyle = {
