@@ -1,7 +1,9 @@
 {
   "name": "Ekstrabet",
   "short_name": "Eb",
-  "start_url": "/",
+"id": "/",
+"start_url": "/",
+
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1a73e8",
