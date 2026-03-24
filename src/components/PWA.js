@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 const InstallPWAButton = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);
 
   useEffect(() => {
     if (
@@ -18,29 +18,44 @@ const InstallPWAButton = () => {
       !window.MSStream;
     setIsIOS(ios);
 
+    // Check global event
+    if (window.deferredPrompt) {
+      setCanInstall(true);
+    }
+
+    // Fallback listener
     const handler = (e) => {
       e.preventDefault();
-      console.log("🔥 INSTALL PROMPT FIRED");
-      setDeferredPrompt(e);
+      console.log("🔥 REACT EVENT FIRED");
+      window.deferredPrompt = e;
+      setCanInstall(true);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
 
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    return () =>
+      window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
   const handleClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
+    const promptEvent = window.deferredPrompt;
+
+    console.log("Prompt object:", promptEvent);
+
+    if (promptEvent) {
+      promptEvent.prompt();
+
+      const { outcome } = await promptEvent.userChoice;
       console.log("User choice:", outcome);
-      setDeferredPrompt(null);
+
+      window.deferredPrompt = null;
+      setCanInstall(false);
     } else if (isIOS) {
       alert(
         "Na iPhone: Kliknij 'Udostępnij' i wybierz 'Do ekranu początkowego' 📲"
       );
     } else {
-      alert("Instalacja niedostępna — spróbuj odświeżyć stronę.");
+      alert("Instalacja niedostępna — odśwież stronę i kliknij stronę.");
     }
   };
 
@@ -48,7 +63,7 @@ const InstallPWAButton = () => {
 
   return (
     <button onClick={handleClick} style={buttonStyle}>
-      📲 Zainstaluj aplikację Ekstrabet
+      {canInstall ? "📲 Zainstaluj aplikację" : "📲 Odśwież aby zainstalować"}
     </button>
   );
 };
@@ -62,7 +77,6 @@ const buttonStyle = {
   cursor: "pointer",
   fontWeight: "bold",
   fontSize: "16px",
-  boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
 };
 
 export default InstallPWAButton;
