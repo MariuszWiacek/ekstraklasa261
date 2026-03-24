@@ -1,24 +1,34 @@
-self.addEventListener("install", () => {
-  console.log("Service Worker installed");
+const CACHE_NAME = "ekstrabet-v1";
+
+self.addEventListener("install", (event) => {
+  console.log("SW installed");
+
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll([
+        "/",
+        "/index.html",
+        "/manifest.json",
+        "/icon-192.png",
+        "/icon-512.png"
+      ]);
+    })
+  );
+
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  console.log("Service Worker activated");
+  console.log("SW activated");
   event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener("fetch", (event) => {
-  // ✅ Only handle GET requests (important!)
   if (event.request.method !== "GET") return;
 
   event.respondWith(
-    fetch(event.request).catch(() => {
-      // fallback if offline
-      return new Response("Offline", {
-        status: 503,
-        statusText: "Offline",
-      });
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
     })
   );
 });
