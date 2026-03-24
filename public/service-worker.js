@@ -1,13 +1,19 @@
-self.addEventListener('install', (event) => {
-  console.log('Service Worker installing...');
+const CACHE_NAME = "app-cache-v1";
+
+self.addEventListener("install", (event) => {
+  console.log("Service Worker installing...");
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  console.log('Service Worker activated');
-  return self.clients.claim();
+self.addEventListener("activate", (event) => {
+  console.log("Service Worker activated");
+  event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('fetch', (event) => {
-  // no caching yet
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((res) => {
+      return res || fetch(event.request);
+    })
+  );
 });
