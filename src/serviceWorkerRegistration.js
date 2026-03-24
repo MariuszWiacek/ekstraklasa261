@@ -3,13 +3,13 @@ export function register() {
     window.addEventListener("load", async () => {
       try {
         const reg = await navigator.serviceWorker.register("/service-worker.js");
-        console.log("✅ Service Worker Registered", reg);
+        console.log("✅ SW registered", reg);
 
         navigator.serviceWorker.ready.then(() => {
-          console.log("✅ Service Worker Ready");
+          console.log("✅ SW ready");
         });
       } catch (err) {
-        console.log("❌ SW registration failed:", err);
+        console.error("❌ SW failed:", err);
       }
     });
   }
