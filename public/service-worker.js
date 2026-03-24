@@ -1,19 +1,12 @@
-const CACHE_NAME = "app-cache-v1";
-
-self.addEventListener("install", (event) => {
-  console.log("Service Worker installing...");
+self.addEventListener("install", () => {
+  console.log("SW installed");
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  console.log("Service Worker activated");
+  console.log("SW activated");
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((res) => {
-      return res || fetch(event.request);
-    })
-  );
-});
+// IMPORTANT: DO NOTHING WITH FETCH (prevents breaking app)
+self.addEventListener("fetch", () => {});
