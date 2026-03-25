@@ -52,7 +52,7 @@ const InstallPWAButton = () => {
       setCanInstall(false);
     } else if (isIOS) {
       alert(
-        "Na iPhone: Kliknij 'Udostępnij' i wybierz 'Dodaj do ekranu początkowego' 📲"
+        "Na iPhone: Aby zainstalować na iOS, otwórz stronę aplikacji w przeglądarce Safari, kliknij ikonę Udostępnij (kwadrat ze strzałką w górę) na dolnym pasku, a następnie wybierz „Do ekranu początkowego” i zatwierdź przyciskiem „Dodaj”. ' 📲"
       );
     } else {
       alert("Instalacja chwilowo niedostępna");
