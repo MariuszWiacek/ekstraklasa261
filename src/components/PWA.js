@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 const InstallPWAButton = () => {
   const [isIOS, setIsIOS] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [canInstall, setCanInstall] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   useEffect(() => {
+    // 1. Sprawdź czy już zainstalowano
     if (
       window.matchMedia("(display-mode: standalone)").matches ||
       window.navigator.standalone === true
@@ -13,80 +15,113 @@ const InstallPWAButton = () => {
       setIsInstalled(true);
     }
 
-    const ios =
-      /iphone|ipad|ipod/i.test(window.navigator.userAgent) &&
-      !window.MSStream;
+    // 2. Wykryj iOS
+    const ios = /iphone|ipad|ipod/i.test(window.navigator.userAgent) && !window.MSStream;
     setIsIOS(ios);
 
-    // Check global event
-    if (window.deferredPrompt) {
-      setCanInstall(true);
-    }
-
-    // Fallback listener
+    // 3. Obsługa Android/Chrome (standardowy prompt)
     const handler = (e) => {
       e.preventDefault();
-      console.log("🔥 REACT EVENT FIRED");
-      window.deferredPrompt = e;
-      setCanInstall(true);
+      setDeferredPrompt(e);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
 
-    return () =>
-      window.removeEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
   const handleClick = async () => {
-    const promptEvent = window.deferredPrompt;
-
-    console.log("Prompt object:", promptEvent);
-
-    if (promptEvent) {
-      promptEvent.prompt();
-
-      const { outcome } = await promptEvent.userChoice;
-      console.log("User choice:", outcome);
-
-      window.deferredPrompt = null;
-      setCanInstall(false);
+    if (deferredPrompt) {
+      // Dla Androida/PC
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") setDeferredPrompt(null);
     } else if (isIOS) {
-      alert(
-        "Na iPhone: Aby zainstalować na iOS, otwórz stronę aplikacji w przeglądarce Safari, kliknij ikonę Udostępnij (kwadrat ze strzałką w górę) na dolnym pasku, a następnie wybierz „Do ekranu początkowego” i zatwierdź przyciskiem „Dodaj”. ' 📲"
-      );
-    } else {
-      alert("Instalacja chwilowo niedostępna");
+      // Dla iPhone - pokazujemy instrukcję
+      setShowInstructions(true);
     }
   };
 
   if (isInstalled) return null;
 
+  // Przycisk powinien być aktywny jeśli:
+  // a) Mamy prompt (Android) LUB b) To jest iOS
+  const isAvailable = deferredPrompt || isIOS;
+
   return (
-  <button
-    onClick={handleClick}
-    style={{
-      ...buttonStyle,
-      opacity: canInstall ? 1 : 0.5,
-      cursor: canInstall ? "pointer" : "not-allowed",
-    }}
-    disabled={!canInstall}
-  >
-    {canInstall
-      ? "📲 Zainstaluj apkę"
-      : "📲 Apka chwilowo niedostępna"}
-  </button>
-);
+    <>
+      <button
+        onClick={handleClick}
+        style={{
+          ...buttonStyle,
+          opacity: isAvailable ? 1 : 0.5,
+          cursor: isAvailable ? "pointer" : "not-allowed",
+        }}
+      >
+        📲 Zainstaluj aplikację
+      </button>
+
+      {/* Modal z instrukcją dla iOS */}
+      {showInstructions && (
+        <div style={modalOverlayStyle} onClick={() => setShowInstructions(false)}>
+          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+            <h3>Instalacja na iPhone</h3>
+            <p>Aby dodać aplikację do ekranu głównego:</p>
+            <ol style={{ textAlign: "left" }}>
+              <li>Kliknij ikonę <strong>Udostępnij</strong> (kwadrat ze strzałką) w dolnym menu Safari.</li>
+              <li>Przewiń w dół i wybierz <strong>"Do ekranu początkowego"</strong>.</li>
+              <li>Kliknij <strong>"Dodaj"</strong> w prawym górnym rogu.</li>
+            </ol>
+            <button onClick={() => setShowInstructions(false)} style={closeButtonStyle}>
+              Rozumiem
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
+// --- Style ---
 const buttonStyle = {
   background: "#00ff0d",
   color: "#000",
   padding: "12px 25px",
   border: "none",
   borderRadius: "30px",
-  cursor: "pointer",
   fontWeight: "bold",
   fontSize: "16px",
+};
+
+const modalOverlayStyle = {
+  position: "fixed",
+  top: 0, left: 0, right: 0, bottom: 0,
+  backgroundColor: "rgba(0,0,0,0.7)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 1000,
+  padding: "20px"
+};
+
+const modalStyle = {
+  background: "white",
+  padding: "25px",
+  borderRadius: "20px",
+  maxWidth: "300px",
+  textAlign: "center",
+  color: "#333",
+  boxShadow: "0 10px 25px rgba(0,0,0,0.2)"
+};
+
+const closeButtonStyle = {
+  marginTop: "15px",
+  padding: "10px 20px",
+  backgroundColor: "#007AFF", // Niebieski kolor Apple
+  color: "white",
+  border: "none",
+  borderRadius: "10px",
+  fontWeight: "bold"
 };
 
 export default InstallPWAButton;
