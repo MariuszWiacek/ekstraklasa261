@@ -42,7 +42,6 @@ const groupGamesIntoKolejki = (games) => {
   return kolejki;
 };
 
-// Function to check if a game is frozen (games 12-18)
 const isFrozenGame = (gameId) => gameId >= 12 && gameId <= 18;
 
 const Bets = () => {
@@ -55,13 +54,13 @@ const Bets = () => {
   const [areInputsEditable, setAreInputsEditable] = useState(true);
   const [isHiddenActive, setIsHiddenActive] = useState(false);
 
-const [modalConfig, setModalConfig] = useState({
-  show: false,
-  title: "",
-  message: "",
-  type: "info"
-});
-
+  // Stan dla własnego modala
+  const [modalConfig, setModalConfig] = useState({
+    show: false,
+    title: "",
+    message: "",
+    type: "info"
+  });
 
   useEffect(() => {
     const lastChosenUser = localStorage.getItem('selectedUser');
@@ -95,9 +94,7 @@ const [modalConfig, setModalConfig] = useState({
   };
 
   const handleScoreChange = (gameId, scoreInput) => {
-    // Prevent changes to frozen games
     if (isFrozenGame(gameId)) return;
-    
     const cleaned = scoreInput.replace(/[^0-9:]/g, '');
     const formatted = cleaned.replace(/^(?:(\d))([^:]*$)/, '$1:$2');
     const updated = kolejki.map(kolejka => ({
@@ -108,74 +105,69 @@ const [modalConfig, setModalConfig] = useState({
   };
 
   const handleSubmit = () => {
-  // 1. Walidacja wyboru użytkownika
-  if (!selectedUser) {
-    setModalConfig({
-      show: true,
-      title: "Brak użytkownika",
-      message: "Proszę wybrać użytkownika przed wysłaniem zakładów.",
-      type: "info"
-    });
-    return;
-  }
-
-  const currentKolejka = kolejki[currentKolejkaIndex];
-  const userSubmittedBets = submittedData[selectedUser] || {};
-  
-  const newBetsToSubmit = currentKolejka.games.reduce((acc, game) => {
-    // Zachowana oryginalna logika mrożenia gier i wykrywania zakładów
-    if (game.score && !userSubmittedBets[game.id] && !isFrozenGame(game.id)) {
-      acc[game.id] = {
-        home: game.home,
-        away: game.away,
-        score: game.score,
-        bet: autoDetectBetType(game.score),
-        kolejkaId: game.kolejkaId,
-        isHidden: isHiddenActive 
-      };
+    if (!selectedUser) {
+      setModalConfig({ show: true, title: "Brak użytkownika", message: "Proszę wybrać użytkownika przed wysłaniem zakładów.", type: "info" });
+      return;
     }
-    return acc;
-  }, {});
 
-  // 2. Walidacja pustej listy zakładów
-  if (Object.keys(newBetsToSubmit).length === 0) {
-    setModalConfig({
-      show: true,
-      title: "Informacja",
-      message: "Wszystkie zakłady zostały już przesłane lub gry są zablokowane.",
-      type: "info"
-    });
-    return;
-  }
+    const currentKolejka = kolejki[currentKolejkaIndex];
+    const userSubmittedBets = submittedData[selectedUser] || {};
+    
+    const newBetsToSubmit = currentKolejka.games.reduce((acc, game) => {
+      if (game.score && !userSubmittedBets[game.id] && !isFrozenGame(game.id)) {
+        acc[game.id] = {
+          home: game.home, away: game.away, score: game.score,
+          bet: autoDetectBetType(game.score), kolejkaId: game.kolejkaId,
+          isHidden: isHiddenActive 
+        };
+      }
+      return acc;
+    }, {});
 
-  // 3. Wysyłka do bazy danych
-  update(ref(database, `submittedData/${selectedUser}`), newBetsToSubmit)
-    .then(() => {
-      setModalConfig({
-        show: true,
-        title: "Sukces!",
-        message: "Zakłady zostały pomyślnie przesłane!",
-        type: "success"
+    if (Object.keys(newBetsToSubmit).length === 0) {
+      setModalConfig({ show: true, title: "Informacja", message: "Wszystkie zakłady zostały już przesłane lub gry są zablokowane.", type: "info" });
+      return;
+    }
+
+    update(ref(database, `submittedData/${selectedUser}`), newBetsToSubmit)
+      .then(() => {
+        setModalConfig({ show: true, title: "Sukces!", message: "Zakłady zostały pomyślnie przesłane!", type: "success" });
+      })
+      .catch((error) => {
+        console.error('Błąd:', error);
+        setModalConfig({ show: true, title: "Błąd", message: "Nie udało się zapisać danych.", type: "error" });
       });
-    })
-    .catch((error) => {
-      console.error('Błąd:', error);
-      setModalConfig({
-        show: true,
-        title: "Błąd wysyłania",
-        message: "Nie udało się zapisać danych w bazie. Spróbuj ponownie.",
-        type: "error"
-      });
-    });
-};
-
+  };
 
   const getTeamLogo = (name) => teamsData[name]?.logo || '';
   const toggleEditableOff = () => setAreInputsEditable(false);
   const toggleEditableOn = () => setAreInputsEditable(true);
 
+  // --- STYLE DLA MODALA ---
+  const modalOverlayStyle = {
+    position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 9999
+  };
+  const modalStyle = {
+    background: "white", padding: "25px", borderRadius: "20px", width: "85%", maxWidth: "350px", textAlign: "center", color: "#222"
+  };
+  const modalButtonStyle = {
+    backgroundColor: "#DC3545", color: "white", border: "none", padding: "10px 30px", borderRadius: "15px", fontWeight: "bold", marginTop: "15px", cursor: "pointer"
+  };
+
   return (
     <div className="fade-in" style={{ textAlign: 'center', color: 'yellow' }}>
+      {/* MODAL WINDOW */}
+      {modalConfig.show && (
+        <div style={modalOverlayStyle} onClick={() => setModalConfig({...modalConfig, show: false})}>
+          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ color: modalConfig.type === 'success' ? '#28a745' : '#333', marginTop: 0 }}>{modalConfig.title}</h2>
+            <p style={{ fontSize: "16px", lineHeight: "1.4" }}>{modalConfig.message}</p>
+            <button style={modalButtonStyle} onClick={() => setModalConfig({...modalConfig, show: false})}>OK</button>
+          </div>
+        </div>
+      )}
+
       <FontAwesomeIcon icon={faUser} style={{ marginRight: '8px', fontSize: '14px', color: 'yellow' }} />
       <select
         style={{ margin: '1px', backgroundColor: 'pink', fontWeight: 'bold', fontFamily: 'Rubik' }}
@@ -211,11 +203,11 @@ const [modalConfig, setModalConfig] = useState({
                 <tr style={{ borderBottom: '1px solid #444', opacity: game.disabled || isFrozenGame(game.id) ? '0.5' : '1', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
                   <td><p style={{ color: 'grey' }}>{game.id}.</p></td>
                   <td style={{ textAlign: 'center', paddingRight: '10px', fontSize: '20px' }}>
-                    <img src={getTeamLogo(game.home)} className="logo" /> {game.home}
+                    <img src={getTeamLogo(game.home)} className="logo" alt="logo" /> {game.home}
                   </td>
                   <td style={{ textAlign: 'center', fontSize: '20px' }}>-</td>
                   <td style={{ textAlign: 'left', paddingLeft: '10px', fontSize: '20px' }}>
-                    <img src={getTeamLogo(game.away)} className="logo" /> {game.away}
+                    <img src={getTeamLogo(game.away)} className="logo" alt="logo" /> {game.away}
                   </td>
                   <td style={{ textAlign: 'center', fontSize: '20px' }}>{results[game.id]}</td>
                   <td style={{ textAlign: 'center' }}>
@@ -232,7 +224,7 @@ const [modalConfig, setModalConfig] = useState({
                       }}
                       type="text"
                       placeholder={isReadOnly(selectedUser, game.id) ? '✔️' : 'x:x'}
-                      value={game.score}
+                      value={game.score || ''}
                       onChange={(e) => handleScoreChange(game.id, e.target.value)}
                       maxLength="3"
                       readOnly={areInputsEditable && isReadOnly(selectedUser, game.id)}
@@ -273,6 +265,9 @@ const [modalConfig, setModalConfig] = useState({
         <button style={{ backgroundColor: '#28a745', color: 'white', padding: '10px 1px', border: 'none', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={toggleEditableOff}>..</button>
         <button style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 1px', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={toggleEditableOn}>..</button>
       </div>
+      
+      {/* Opcjonalnie: Przycisk instalacji PWA na dole */}
+      <InstallPWAButton />
     </div>
   );
 };
