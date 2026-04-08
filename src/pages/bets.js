@@ -55,6 +55,14 @@ const Bets = () => {
   const [areInputsEditable, setAreInputsEditable] = useState(true);
   const [isHiddenActive, setIsHiddenActive] = useState(false);
 
+const [modalConfig, setModalConfig] = useState({
+  show: false,
+  title: "",
+  message: "",
+  type: "info"
+});
+
+
   useEffect(() => {
     const lastChosenUser = localStorage.getItem('selectedUser');
     if (lastChosenUser) setSelectedUser(lastChosenUser);
@@ -100,26 +108,67 @@ const Bets = () => {
   };
 
   const handleSubmit = () => {
-    if (!selectedUser) { alert('Proszę wybrać użytkownika.'); return; }
-    const currentKolejka = kolejki[currentKolejkaIndex];
-    const userSubmittedBets = submittedData[selectedUser] || {};
-    const newBetsToSubmit = currentKolejka.games.reduce((acc, game) => {
-      // Prevent submission of bets for frozen games
-      if (game.score && !userSubmittedBets[game.id] && !isFrozenGame(game.id)) {
-        acc[game.id] = {
-          home: game.home, away: game.away, score: game.score,
-          bet: autoDetectBetType(game.score), kolejkaId: game.kolejkaId,
-          isHidden: isHiddenActive 
-        };
-      }
-      return acc;
-    }, {});
+  // 1. Walidacja wyboru użytkownika
+  if (!selectedUser) {
+    setModalConfig({
+      show: true,
+      title: "Brak użytkownika",
+      message: "Proszę wybrać użytkownika przed wysłaniem zakładów.",
+      type: "info"
+    });
+    return;
+  }
 
-    if (Object.keys(newBetsToSubmit).length === 0) { alert("Wszystkie zakłady zostały już przesłane."); return; }
-    update(ref(database, `submittedData/${selectedUser}`), newBetsToSubmit)
-      .then(() => alert('Zakłady zostały pomyślnie przesłane!'))
-      .catch((error) => console.error('Błąd:', error));
-  };
+  const currentKolejka = kolejki[currentKolejkaIndex];
+  const userSubmittedBets = submittedData[selectedUser] || {};
+  
+  const newBetsToSubmit = currentKolejka.games.reduce((acc, game) => {
+    // Zachowana oryginalna logika mrożenia gier i wykrywania zakładów
+    if (game.score && !userSubmittedBets[game.id] && !isFrozenGame(game.id)) {
+      acc[game.id] = {
+        home: game.home,
+        away: game.away,
+        score: game.score,
+        bet: autoDetectBetType(game.score),
+        kolejkaId: game.kolejkaId,
+        isHidden: isHiddenActive 
+      };
+    }
+    return acc;
+  }, {});
+
+  // 2. Walidacja pustej listy zakładów
+  if (Object.keys(newBetsToSubmit).length === 0) {
+    setModalConfig({
+      show: true,
+      title: "Informacja",
+      message: "Wszystkie zakłady zostały już przesłane lub gry są zablokowane.",
+      type: "info"
+    });
+    return;
+  }
+
+  // 3. Wysyłka do bazy danych
+  update(ref(database, `submittedData/${selectedUser}`), newBetsToSubmit)
+    .then(() => {
+      setModalConfig({
+        show: true,
+        title: "Sukces!",
+        message: "Zakłady zostały pomyślnie przesłane!",
+        type: "success"
+      });
+    })
+    .catch((error) => {
+      console.error('Błąd:', error);
+      setModalConfig({
+        show: true,
+        title: "Błąd wysyłania",
+        message: "Nie udało się zapisać danych w bazie. Spróbuj ponownie.",
+        type: "error"
+      });
+    });
+};
+
 
   const getTeamLogo = (name) => teamsData[name]?.logo || '';
   const toggleEditableOff = () => setAreInputsEditable(false);
