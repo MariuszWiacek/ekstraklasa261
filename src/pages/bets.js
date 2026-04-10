@@ -125,13 +125,13 @@ const Bets = () => {
     }, {});
 
     if (Object.keys(newBetsToSubmit).length === 0) {
-      setModalConfig({ show: true, title: "Informacja", message: "Wszystkie zakłady zostały już przesłane lub gry są zablokowane.", type: "info" });
+      setModalConfig({ show: true,  message: "Wszystkie zakłady zostały już przesłane lub gry są zablokowane.", type: "info" });
       return;
     }
 
     update(ref(database, `submittedData/${selectedUser}`), newBetsToSubmit)
       .then(() => {
-        setModalConfig({ show: true, title: "Sukces!", message: "Zakłady zostały pomyślnie przesłane!", type: "success" });
+        setModalConfig({ show: true, message: "Zakłady zostały pomyślnie przesłane!", type: "success" });
       })
       .catch((error) => {
         console.error('Błąd:', error);
@@ -149,10 +149,10 @@ const Bets = () => {
     backgroundColor: "rgba(0, 0, 0, 0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 9999
   };
   const modalStyle = {
-    background: "white", padding: "25px", borderRadius: "20px", width: "85%", maxWidth: "350px", textAlign: "center", color: "red"
+    background: "#015f01a9", padding: "25px", borderRadius: "20px", width: "85%", maxWidth: "350px", textAlign: "center", color: "red"
   };
   const modalButtonStyle = {
-    backgroundColor: "#DC3545", color: "grey", border: "none", padding: "10px 30px", borderRadius: "15px", fontWeight: "bold", marginTop: "15px", cursor: "pointer"
+    backgroundColor: "#DC3545", color: "white", border: "none", padding: "10px 30px", borderRadius: "15px", fontWeight: "bold", marginTop: "15px", cursor: "pointer"
   };
 
   return (
