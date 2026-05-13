@@ -165,8 +165,8 @@
 
 { "id": 124, "kolejkaId": 31, "home": "Radomiak", "away": "Lechia", "kickoff": "19:00", "date": "2026-05-04", "disabled": false },
 
-{ "id": 125, "kolejkaId": 31, "home": "Arka", "away": "Górnik", "kickoff": "00:00", "date": "2026-05-00", "disabled": false },
-{ "id": 126, "kolejkaId": 31, "home": "Raków", "away": "Jagiellonia", "kickoff": "00:00", "date": "2026-05-00", "disabled": false },
+{ "id": 125, "kolejkaId": 31, "home": "Arka", "away": "Górnik", "kickoff": "18:00", "date": "2026-05-13", "disabled": false },
+{ "id": 126, "kolejkaId": 31, "home": "Raków", "away": "Jagiellonia", "kickoff": "20:00", "date": "2026-05-13", "disabled": false },
 
 
 { "id": 127, "kolejkaId": 32, "home": "Raków", "away": "Korona", "kickoff": "18:00", "date": "2026-05-08", "disabled": false },
