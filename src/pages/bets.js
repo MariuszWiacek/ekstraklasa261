@@ -42,7 +42,6 @@ const groupGamesIntoKolejki = (games) => {
   return kolejki;
 };
 
-const isFrozenGame = (gameId) => gameId >= 12 && gameId <= 18;
 
 const Bets = () => {
   const [kolejki, setKolejki] = useState(groupGamesIntoKolejki(gameData));
