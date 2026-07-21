@@ -143,7 +143,7 @@ const Bets = () => {
   const toggleEditableOff = () => setAreInputsEditable(false);
   const toggleEditableOn = () => setAreInputsEditable(true);
 
-  // --- STYLE DLA MODALA ---
+  // Styles for modal
   const modalOverlayStyle = {
     position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
     backgroundColor: "rgba(0, 0, 0, 0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 9999
@@ -153,6 +153,12 @@ const Bets = () => {
   };
   const modalButtonStyle = {
     backgroundColor: "#DC3545", color: "white", border: "none", padding: "10px 30px", borderRadius: "15px", fontWeight: "bold", marginTop: "15px", cursor: "pointer"
+  };
+
+  const logoStyle = {
+    width: '24px',
+    height: '24px',
+    objectFit: 'contain'
   };
 
   return (
@@ -184,9 +190,9 @@ const Bets = () => {
           <thead>
             <tr>
               <th style={{ borderBottom: '0.5px solid #444' }}></th>
-              <th style={{ borderBottom: '0.5px solid #444' }}>Gospodarz</th>
+              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'right', paddingRight: '10px' }}>Gospodarz</th>
               <th style={{ borderBottom: '0.5px solid #444' }}></th>
-              <th style={{ borderBottom: '0.5px solid #444' }}>Gość</th>
+              <th style={{ borderBottom: '0.5px solid #444', textAlign: 'left', paddingLeft: '10px' }}>Gość</th>
               <th style={{ borderBottom: '0.5px solid #444' }}>Wynik</th>
               <th style={{ borderBottom: '0.5px solid #444' }}>1X2</th>
               <th style={{ borderBottom: '0.5px solid #444' }}>Typ</th>
@@ -201,26 +207,39 @@ const Bets = () => {
                   </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid #444', opacity: game.disabled || isFrozenGame(game.id) ? '0.5' : '1', backgroundColor: gameStarted(game.date, game.kickoff) ? '#214029ab' : 'transparent' }}>
-                  <td><p style={{ color: 'grey' }}>{game.id}.</p></td>
-                  <td style={{ textAlign: 'center', paddingRight: '10px', fontSize: '20px' }}>
-                    <img src={getTeamLogo(game.home)} className="logo" alt="logo" /> {game.home}
+                  <td><p style={{ color: 'grey', margin: 0 }}>{game.id}.</p></td>
+                  
+                  {/* HOME TEAM */}
+                  <td style={{ fontSize: '16px', paddingRight: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                      <span>{game.home}</span>
+                      <img src={getTeamLogo(game.home)} className="logo" alt="" style={logoStyle} />
+                    </div>
                   </td>
-                  <td style={{ textAlign: 'center', fontSize: '20px' }}>-</td>
-                  <td style={{ textAlign: 'left', paddingLeft: '10px', fontSize: '20px' }}>
-                    <img src={getTeamLogo(game.away)} className="logo" alt="logo" /> {game.away}
+
+                  <td style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold' }}>-</td>
+
+                  {/* AWAY TEAM */}
+                  <td style={{ fontSize: '16px', paddingLeft: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '8px' }}>
+                      <img src={getTeamLogo(game.away)} className="logo" alt="" style={logoStyle} />
+                      <span>{game.away}</span>
+                    </div>
                   </td>
-                  <td style={{ textAlign: 'center', fontSize: '20px' }}>{results[game.id]}</td>
+
+                  <td style={{ textAlign: 'center', fontSize: '18px' }}>{results[game.id]}</td>
                   <td style={{ textAlign: 'center' }}>
                     <select value={game.bet} disabled>
                       <option value="1">1</option><option value="X">X</option><option value="2">2</option>
                     </select>
                   </td>
-                  <td>
+                  <td style={{ textAlign: 'center' }}>
                     <input
                       style={{ 
                         width: '50px', 
                         backgroundColor: isFrozenGame(game.id) ? '#ddd' : game.score ? isReadOnly(selectedUser, game.id) ? 'transparent' : 'white' : 'white', 
-                        color: 'red' 
+                        color: 'red',
+                        textAlign: 'center'
                       }}
                       type="text"
                       placeholder={isReadOnly(selectedUser, game.id) ? '✔️' : 'x:x'}
@@ -266,7 +285,6 @@ const Bets = () => {
         <button style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 1px', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={toggleEditableOn}>..</button>
       </div>
       
-      {/* Opcjonalnie: Przycisk instalacji PWA na dole */}
       <InstallPWAButton />
     </div>
   );
